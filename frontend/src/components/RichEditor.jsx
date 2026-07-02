@@ -1,9 +1,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import Underline from "@tiptap/extension-underline";
 import { Youtube } from "@tiptap/extension-youtube";
 import { useRef } from "react";
 import {
@@ -30,10 +28,10 @@ export const RichEditor = ({ value, onChange, placeholder = "Makalenizi buraya y
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
+      StarterKit.configure({
+        link: { openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } },
+      }),
       Image.configure({ inline: false, allowBase64: false }),
-      Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } }),
       Placeholder.configure({ placeholder }),
       Youtube.configure({ controls: true, nocookie: true, width: 720, height: 405, HTMLAttributes: { class: "yt-embed" } }),
     ],

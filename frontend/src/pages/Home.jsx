@@ -69,7 +69,9 @@ export const Home = () => {
               <div key={a.id} className="flex gap-4 items-start border-b border-white/5 pb-3 last:border-b-0">
                 <span className="font-outfit font-black text-4xl text-[#F59E0B]/40 leading-none">{String(i + 1).padStart(2, "0")}</span>
                 <Link to={`/makale/${a.slug}`} data-testid={`trending-${a.slug}`} className="flex-1 group">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">{a.category_name}</span>
+                  <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">
+                    {(a.category_names && a.category_names.length ? a.category_names : [a.category_name]).join(" · ")}
+                  </span>
                   <h4 className="font-outfit font-semibold text-white text-sm mt-1 leading-snug group-hover:text-[#F59E0B] transition-colors line-clamp-3">
                     {a.title}
                   </h4>

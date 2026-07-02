@@ -63,13 +63,20 @@ export const Article = () => {
           </>
         )}
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
-          <Link
-            to={`/kategori/${article.category_slug}`}
-            data-testid="article-category-badge"
-            className="inline-block bg-[#F59E0B] text-black px-3 py-1 font-jetbrains text-[10px] uppercase tracking-widest hover:bg-[#10B981]"
-          >
-            {article.category_name}
-          </Link>
+          <div className="flex flex-wrap gap-2" data-testid="article-category-badges">
+            {(article.category_slugs && article.category_slugs.length
+              ? article.category_slugs.map((s, i) => ({ slug: s, name: article.category_names?.[i] || s }))
+              : [{ slug: article.category_slug, name: article.category_name }]
+            ).map(c => (
+              <Link
+                key={c.slug}
+                to={`/kategori/${c.slug}`}
+                className="inline-block bg-[#F59E0B] text-black px-3 py-1 font-jetbrains text-[10px] uppercase tracking-widest hover:bg-[#10B981]"
+              >
+                {c.name}
+              </Link>
+            ))}
+          </div>
           <h1 data-testid="article-title" className="font-outfit font-bold text-4xl md:text-6xl leading-[1.05] mt-6 text-white tracking-tight">
             {article.title}
           </h1>

@@ -126,8 +126,10 @@ class Article(BaseModel):
     excerpt: str = ""
     content_html: str = ""
     cover_image: Optional[str] = ""
-    category_slug: str
+    category_slug: str  # primary category (backward compat + primary display)
     category_name: str
+    category_slugs: List[str] = []  # all categories (multi-select)
+    category_names: List[str] = []
     tags: List[str] = []
     author_id: str
     author_name: str
@@ -146,7 +148,8 @@ class ArticleCreate(BaseModel):
     excerpt: Optional[str] = ""
     content_html: str = ""
     cover_image: Optional[str] = ""
-    category_slug: str
+    category_slug: Optional[str] = None  # deprecated single category
+    category_slugs: Optional[List[str]] = None  # preferred: list of categories
     tags: List[str] = []
     status: str = "draft"
 
@@ -157,6 +160,7 @@ class ArticleUpdate(BaseModel):
     content_html: Optional[str] = None
     cover_image: Optional[str] = None
     category_slug: Optional[str] = None
+    category_slugs: Optional[List[str]] = None
     tags: Optional[List[str]] = None
     status: Optional[str] = None
     featured: Optional[bool] = None
@@ -331,14 +335,20 @@ async def list_articles(
 ):
     query: dict = {"status": "published"}
     if category:
-        query["category_slug"] = category
+        # Support both new list field and legacy single field
+        query["$or"] = [{"category_slugs": category}, {"category_slug": category}]
     if tag:
         query["tags"] = tag
     if featured is not None:
         query["featured"] = featured
     if q:
         rx = {"$regex": re.escape(q), "$options": "i"}
-        query["$or"] = [{"title": rx}, {"excerpt": rx}, {"content_html": rx}, {"tags": rx}]
+        q_or = [{"title": rx}, {"excerpt": rx}, {"content_html": rx}, {"tags": rx}]
+        if "$or" in query:
+            # combine: (category match) AND (search match)
+            query = {"$and": [{"$or": query.pop("$or")}, {"$or": q_or}], **query}
+        else:
+            query["$or"] = q_or
     cursor = db.articles.find(query, {"_id": 0, "content_html": 0}).sort("published_at", -1).skip(skip).limit(limit)
     return await cursor.to_list(limit)
 
@@ -358,8 +368,16 @@ async def related_articles(slug: str):
     art = await db.articles.find_one({"slug": slug}, {"_id": 0})
     if not art:
         return []
+    cat_slugs = art.get("category_slugs") or [art.get("category_slug")]
     cursor = db.articles.find(
-        {"category_slug": art["category_slug"], "slug": {"$ne": slug}, "status": "published"},
+        {
+            "$or": [
+                {"category_slugs": {"$in": cat_slugs}},
+                {"category_slug": {"$in": cat_slugs}},
+            ],
+            "slug": {"$ne": slug},
+            "status": "published",
+        },
         {"_id": 0, "content_html": 0},
     ).sort("published_at", -1).limit(4)
     return await cursor.to_list(4)
@@ -390,9 +408,23 @@ async def get_my_article(article_id: str, session_token: Optional[str] = Cookie(
 @api_router.post("/articles")
 async def create_article(payload: ArticleCreate, session_token: Optional[str] = Cookie(None), authorization: Optional[str] = Header(None)):
     user = await require_user(session_token, authorization)
-    cat = await db.categories.find_one({"slug": payload.category_slug}, {"_id": 0})
-    if not cat:
-        raise HTTPException(status_code=400, detail="Invalid category")
+
+    # Normalize: accept either category_slugs (list) or category_slug (single)
+    req_slugs = payload.category_slugs or ([payload.category_slug] if payload.category_slug else [])
+    req_slugs = [s for s in req_slugs if s]
+    if not req_slugs:
+        raise HTTPException(status_code=400, detail="En az bir kategori seçmelisiniz")
+
+    resolved = []
+    for s in req_slugs:
+        c = await db.categories.find_one({"slug": s}, {"_id": 0})
+        if not c:
+            raise HTTPException(status_code=400, detail=f"Geçersiz kategori: {s}")
+        resolved.append(c)
+
+    primary = resolved[0]
+    category_slugs = [c["slug"] for c in resolved]
+    category_names = [c["name"] for c in resolved]
 
     base_slug = slugify(payload.title)
     slug = base_slug
@@ -402,7 +434,6 @@ async def create_article(payload: ArticleCreate, session_token: Optional[str] = 
         i += 1
 
     now = now_iso()
-    # Writers cannot self-publish — only admins can. Force writer submissions to draft.
     requested_status = payload.status if payload.status in ("draft", "published") else "draft"
     if user.role != "admin" and requested_status == "published":
         requested_status = "draft"
@@ -413,8 +444,10 @@ async def create_article(payload: ArticleCreate, session_token: Optional[str] = 
         excerpt=payload.excerpt or "",
         content_html=payload.content_html or "",
         cover_image=payload.cover_image or "",
-        category_slug=payload.category_slug,
-        category_name=cat["name"],
+        category_slug=primary["slug"],
+        category_name=primary["name"],
+        category_slugs=category_slugs,
+        category_names=category_names,
         tags=payload.tags or [],
         author_id=user.user_id,
         author_name=user.name,
@@ -427,7 +460,6 @@ async def create_article(payload: ArticleCreate, session_token: Optional[str] = 
         updated_at=now,
         published_at=now if requested_status == "published" else None,
     )
-    # Writers can only save drafts; admin approval required for publish
     doc = art.model_dump()
     await db.articles.insert_one(doc)
     doc.pop("_id", None)
@@ -457,12 +489,21 @@ async def update_article(article_id: str, payload: ArticleUpdate, session_token:
         updates["cover_image"] = data["cover_image"]
     if "tags" in data:
         updates["tags"] = data["tags"]
-    if "category_slug" in data:
-        cat = await db.categories.find_one({"slug": data["category_slug"]}, {"_id": 0})
-        if not cat:
-            raise HTTPException(status_code=400, detail="Invalid category")
-        updates["category_slug"] = data["category_slug"]
-        updates["category_name"] = cat["name"]
+    if "category_slug" in data or "category_slugs" in data:
+        req_slugs = data.get("category_slugs") or ([data.get("category_slug")] if data.get("category_slug") else [])
+        req_slugs = [s for s in req_slugs if s]
+        if not req_slugs:
+            raise HTTPException(status_code=400, detail="En az bir kategori seçmelisiniz")
+        resolved = []
+        for s in req_slugs:
+            c = await db.categories.find_one({"slug": s}, {"_id": 0})
+            if not c:
+                raise HTTPException(status_code=400, detail=f"Geçersiz kategori: {s}")
+            resolved.append(c)
+        updates["category_slug"] = resolved[0]["slug"]
+        updates["category_name"] = resolved[0]["name"]
+        updates["category_slugs"] = [c["slug"] for c in resolved]
+        updates["category_names"] = [c["name"] for c in resolved]
     if "status" in data and data["status"] in ("draft", "published"):
         # Only admins can publish; writers can only save as draft
         if data["status"] == "published" and user.role != "admin":
@@ -751,6 +792,8 @@ async def seed_data():
                 "cover_image": a["cover_image"],
                 "category_slug": a["category_slug"],
                 "category_name": cat["name"],
+                "category_slugs": [a["category_slug"]],
+                "category_names": [cat["name"]],
                 "tags": a["tags"],
                 "author_id": system_user_id,
                 "author_name": "PrivyAlgo Editör",
@@ -765,6 +808,13 @@ async def seed_data():
             }
             await db.articles.insert_one(doc)
         logger.info(f"Seeded {len(DEMO_ARTICLES)} demo articles")
+
+    # Migrate existing docs missing category_slugs array (idempotent)
+    async for old in db.articles.find({"category_slugs": {"$exists": False}}, {"_id": 0, "id": 1, "category_slug": 1, "category_name": 1}):
+        await db.articles.update_one(
+            {"id": old["id"]},
+            {"$set": {"category_slugs": [old.get("category_slug")], "category_names": [old.get("category_name")]}},
+        )
 
 
 # ---------------------------------------------------------------------------

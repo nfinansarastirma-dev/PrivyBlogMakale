@@ -10,15 +10,15 @@ export const Footer = () => {
     <footer className="mt-24 border-t border-white/10 bg-[#050505]" data-testid="site-footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <img
               src="https://customer-assets.emergentagent.com/job_privyalgo-blog/artifacts/b8het9y5_logo-horizontal.png"
               alt="PrivyAlgo"
-              className="h-12 w-12 object-contain"
+              className="h-24 w-24 object-contain"
             />
             <div>
-              <div className="font-outfit font-bold text-xl text-white">PrivyAlgo Blog</div>
-              <div className="font-jetbrains text-[10px] text-white/40 uppercase tracking-widest">nFinans · Kantitatif Araştırma</div>
+              <div className="font-outfit font-bold text-2xl text-white">PrivyAlgo Blog</div>
+              <div className="font-jetbrains text-[10px] text-white/40 uppercase tracking-widest mt-1">nFinans · Kantitatif Araştırma</div>
             </div>
           </div>
           <p className="mt-4 text-sm text-white/60 leading-relaxed max-w-md">

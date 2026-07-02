@@ -141,7 +141,9 @@ const ArticlesTab = ({ isAdmin }) => {
                   </div>
                 </div>
               </div>
-              <div className="col-span-2 font-jetbrains text-[11px] text-[#F59E0B]">{a.category_name}</div>
+              <div className="col-span-2 font-jetbrains text-[11px] text-[#F59E0B] truncate">
+                {(a.category_names && a.category_names.length ? a.category_names : [a.category_name]).join(" · ")}
+              </div>
               <div className="col-span-1">
                 <span className={`inline-block px-2 py-0.5 font-jetbrains text-[10px] uppercase tracking-widest ${a.status === "published" ? "bg-[#F59E0B] text-black" : "border border-white/20 text-white/70"}`}>
                   {a.status === "published" ? "yayın" : "taslak"}

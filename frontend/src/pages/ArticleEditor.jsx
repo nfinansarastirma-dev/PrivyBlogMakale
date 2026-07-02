@@ -4,7 +4,7 @@ import { api, resolveImage } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { RichEditor } from "@/components/RichEditor";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ImageIcon, Save, Send, X } from "lucide-react";
+import { ArrowLeft, ImageIcon, Save, Send, X, Plus, Check } from "lucide-react";
 import { toast } from "sonner";
 
 export const ArticleEditor = () => {
@@ -15,6 +15,8 @@ export const ArticleEditor = () => {
   const [categories, setCategories] = useState([]);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+  const [addingCat, setAddingCat] = useState(false);
   const coverRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -22,7 +24,7 @@ export const ArticleEditor = () => {
     excerpt: "",
     content_html: "",
     cover_image: "",
-    category_slug: "",
+    category_slugs: [],
     tags: "",
     status: "draft",
   });
@@ -31,8 +33,10 @@ export const ArticleEditor = () => {
     if (!loading && !user) navigate("/", { replace: true });
   }, [user, loading, navigate]);
 
+  const loadCategories = () => api.get("/categories").then(r => setCategories(r.data || []));
+
   useEffect(() => {
-    api.get("/categories").then(r => setCategories(r.data || []));
+    loadCategories();
     if (isEdit) {
       api.get(`/my/articles/${id}`).then(r => {
         const a = r.data;
@@ -41,7 +45,7 @@ export const ArticleEditor = () => {
           excerpt: a.excerpt || "",
           content_html: a.content_html || "",
           cover_image: a.cover_image || "",
-          category_slug: a.category_slug,
+          category_slugs: (a.category_slugs && a.category_slugs.length ? a.category_slugs : (a.category_slug ? [a.category_slug] : [])),
           tags: (a.tags || []).join(", "),
           status: a.status,
         });
@@ -69,7 +73,7 @@ export const ArticleEditor = () => {
 
   const save = async (publish = false) => {
     if (!form.title.trim()) { toast.error("Başlık gerekli"); return; }
-    if (!form.category_slug) { toast.error("Kategori seç"); return; }
+    if (!form.category_slugs || form.category_slugs.length === 0) { toast.error("En az bir kategori seç"); return; }
     setSaving(true);
     try {
       const payload = {
@@ -77,7 +81,7 @@ export const ArticleEditor = () => {
         excerpt: form.excerpt,
         content_html: form.content_html,
         cover_image: form.cover_image,
-        category_slug: form.category_slug,
+        category_slugs: form.category_slugs,
         tags: form.tags.split(",").map(t => t.trim()).filter(Boolean),
         status: publish ? "published" : form.status,
       };
@@ -97,6 +101,31 @@ export const ArticleEditor = () => {
       toast.error(e?.response?.data?.detail || "Kayıt hatası");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const toggleCategory = (slug) => {
+    setForm(prev => {
+      const has = prev.category_slugs.includes(slug);
+      return { ...prev, category_slugs: has ? prev.category_slugs.filter(s => s !== slug) : [...prev.category_slugs, slug] };
+    });
+  };
+
+  const addCategory = async (e) => {
+    e.preventDefault();
+    if (!newCatName.trim()) return;
+    setAddingCat(true);
+    try {
+      const { data } = await api.post("/admin/categories", { name: newCatName.trim() });
+      toast.success("Kategori eklendi");
+      setNewCatName("");
+      await loadCategories();
+      // auto-select the new one
+      setForm(prev => ({ ...prev, category_slugs: [...prev.category_slugs, data.slug] }));
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Eklenemedi");
+    } finally {
+      setAddingCat(false);
     }
   };
 
@@ -195,16 +224,55 @@ export const ArticleEditor = () => {
 
           <div className="border border-white/10 p-4 space-y-3">
             <div>
-              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Kategori</label>
-              <select
-                data-testid="editor-category"
-                value={form.category_slug}
-                onChange={(e) => set("category_slug", e.target.value)}
-                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white"
-              >
-                <option value="">Seç...</option>
-                {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-              </select>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Kategoriler <span className="text-white/40 normal-case">(çoklu seçim)</span></label>
+              <div className="mt-2 max-h-56 overflow-y-auto border border-white/10 bg-black" data-testid="editor-category-list">
+                {categories.length === 0 && <p className="p-3 text-white/40 text-xs font-jetbrains">yükleniyor...</p>}
+                {categories.map(c => {
+                  const checked = form.category_slugs.includes(c.slug);
+                  return (
+                    <label
+                      key={c.slug}
+                      data-testid={`cat-opt-${c.slug}`}
+                      className={`flex items-center gap-2 px-3 py-2 cursor-pointer border-b border-white/5 last:border-b-0 font-jetbrains text-xs uppercase tracking-wider transition-colors ${checked ? "bg-[#F59E0B]/10 text-[#F59E0B]" : "text-white/70 hover:bg-white/5"}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleCategory(c.slug)}
+                        className="accent-[#F59E0B]"
+                      />
+                      <span className="flex-1">{c.name}</span>
+                      {checked && form.category_slugs[0] === c.slug && (
+                        <span className="text-[9px] bg-[#F59E0B] text-black px-1.5 py-0.5">birincil</span>
+                      )}
+                    </label>
+                  );
+                })}
+              </div>
+              {form.category_slugs.length > 0 && (
+                <p className="mt-2 font-jetbrains text-[9px] uppercase tracking-widest text-white/40">
+                  {form.category_slugs.length} kategori seçili · ilk seçilen birincil kategoridir
+                </p>
+              )}
+              {user.role === "admin" && (
+                <form onSubmit={addCategory} className="mt-3 flex gap-1" data-testid="inline-new-cat-form">
+                  <input
+                    data-testid="inline-new-cat-name"
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    placeholder="+ Yeni kategori"
+                    className="flex-1 bg-black border border-white/10 px-2 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-xs text-white placeholder:text-white/30"
+                  />
+                  <button
+                    type="submit"
+                    disabled={addingCat}
+                    data-testid="inline-new-cat-submit"
+                    className="px-3 py-2 border border-[#F59E0B] text-[#F59E0B] hover:bg-[#F59E0B] hover:text-black font-jetbrains text-[10px] uppercase tracking-widest disabled:opacity-40"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </form>
+              )}
             </div>
             <div>
               <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Etiketler</label>

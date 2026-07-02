@@ -7,6 +7,11 @@ const fallback = "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w
 export const ArticleCard = ({ article, variant = "grid" }) => {
   const img = resolveImage(article.cover_image) || fallback;
   const date = article.published_at ? new Date(article.published_at).toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" }) : "";
+  // Build categories list (primary + extras)
+  const cats = (article.category_slugs && article.category_slugs.length
+    ? article.category_slugs.map((s, i) => ({ slug: s, name: article.category_names?.[i] || s }))
+    : (article.category_slug ? [{ slug: article.category_slug, name: article.category_name || article.category_slug }] : []));
+  const primaryCat = cats[0];
 
   if (variant === "hero") {
     return (
@@ -21,9 +26,11 @@ export const ArticleCard = ({ article, variant = "grid" }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
         <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-10">
-          <div className="inline-flex items-center gap-2 font-jetbrains text-[10px] uppercase tracking-widest">
+          <div className="flex flex-wrap items-center gap-2 font-jetbrains text-[10px] uppercase tracking-widest">
             <span className="bg-[#F59E0B] text-black px-2 py-1">Öne Çıkan</span>
-            <span className="border border-white/20 px-2 py-1 text-white/90">{article.category_name}</span>
+            {cats.map(c => (
+              <span key={c.slug} className="border border-white/20 px-2 py-1 text-white/90">{c.name}</span>
+            ))}
           </div>
           <h1 className="font-outfit font-bold text-3xl md:text-5xl leading-[1.05] mt-4 text-white group-hover:text-[#F59E0B] transition-colors max-w-3xl">
             {article.title}
@@ -52,7 +59,7 @@ export const ArticleCard = ({ article, variant = "grid" }) => {
       >
         <div className="w-24 h-24 flex-shrink-0 bg-cover bg-center border border-white/10" style={{ backgroundImage: `url(${img})` }} />
         <div className="flex-1 min-w-0">
-          <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">{article.category_name}</span>
+          <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">{cats.map(c => c.name).join(" · ")}</span>
           <h3 className="font-outfit font-semibold text-white text-sm md:text-base mt-1 leading-snug line-clamp-3 group-hover:text-[#F59E0B] transition-colors">
             {article.title}
           </h3>
@@ -70,8 +77,12 @@ export const ArticleCard = ({ article, variant = "grid" }) => {
     >
       <div className="aspect-[16/10] bg-cover bg-center border-b border-white/10" style={{ backgroundImage: `url(${img})` }} />
       <div className="p-5 flex-1 flex flex-col">
-        <div className="flex items-center gap-3 font-jetbrains text-[10px] uppercase tracking-widest">
-          <span className="text-[#F59E0B]">{article.category_name}</span>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-jetbrains text-[10px] uppercase tracking-widest">
+          {cats.map((c, i) => (
+            <span key={c.slug} className="text-[#F59E0B]">
+              {c.name}{i < cats.length - 1 && <span className="text-white/30 mx-1">·</span>}
+            </span>
+          ))}
           <span className="text-white/30">·</span>
           <span className="text-white/50">{date}</span>
         </div>

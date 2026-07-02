@@ -1,53 +1,48 @@
-import { useEffect } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { HOME } from "@/constants/testIds";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
+import { AuthProvider } from "@/context/AuthContext";
+import { Layout } from "@/components/Layout";
+import { Home } from "@/pages/Home";
+import { Article } from "@/pages/Article";
+import { Category } from "@/pages/Category";
+import { Search } from "@/pages/Search";
+import { AuthCallback } from "@/pages/AuthCallback";
+import { Dashboard } from "@/pages/Dashboard";
+import { ArticleEditor } from "@/pages/ArticleEditor";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
+function AppRouter() {
+  const location = useLocation();
+  // Detect session_id synchronously during render (prevents race conditions)
+  if (location.hash?.includes("session_id=")) {
+    return <AuthCallback />;
+  }
   return (
-    <div>
-      <header className="App-header">
-        <a
-          data-testid={HOME.emergentLink}
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/makale/:slug" element={<Article />} />
+        <Route path="/kategori/:slug" element={<Category />} />
+        <Route path="/arama" element={<Search />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/new" element={<ArticleEditor />} />
+        <Route path="/dashboard/edit/:id" element={<ArticleEditor />} />
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </Layout>
   );
-};
+}
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <AuthProvider>
+          <AppRouter />
+          <Toaster theme="dark" position="top-right" toastOptions={{
+            style: { background: "#0A0A0A", border: "1px solid #27272A", color: "#fff", borderRadius: 0 }
+          }} />
+        </AuthProvider>
       </BrowserRouter>
     </div>
   );

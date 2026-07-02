@@ -1,0 +1,60 @@
+{
+  "summary": "Backend-only testing for PrivyAlgo Blog. 23 pytest tests written covering public endpoints, auth (bearer/cookie), writer RBAC, admin RBAC, uploads, and edge cases. Initial run had 5 failures — most rooted in one real backend bug (ObjectId leak in POST /api/articles response). Fixed that bug + one test assertion; final run 23/23 passing.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "POST /api/articles",
+        "issue": "Endpoint returned 500 due to ObjectId leak. `insert_one(doc)` mutates the passed dict adding Mongo `_id`, then endpoint returned the same dict → FastAPI serialization crashed with `ObjectId is not iterable`. FIXED by popping `_id` before returning.",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": [
+      {
+        "endpoint": "slugify()",
+        "issue": "slugify strips underscores without replacing them (e.g., 'TEST_Cat_156ffd' -> 'testcat156ffd'). Not breaking, but produces uglier slugs when titles contain underscores. Consider mapping `_` to `-` before stripping."
+      },
+      {
+        "endpoint": "POST /api/auth/logout",
+        "issue": "Endpoint only reads `session_token` from cookie, not from Authorization Bearer header. Clients using bearer auth cannot log out server-side. Consider accepting bearer too."
+      },
+      {
+        "endpoint": "POST /api/articles",
+        "issue": "Writers can self-publish (status='published') directly. Code comment says 'open policy' — confirm this is intentional; otherwise force writer posts to draft and require admin approval."
+      },
+      {
+        "endpoint": "GET /api/articles/{slug}/related",
+        "issue": "Returns [] silently when slug not found (200 OK). Consider 404 for consistency with GET /api/articles/{slug}."
+      }
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Review the ObjectId fix applied in server.py (POST /api/articles) — same pattern should be audited for any other endpoint that returns a mutated insert_one dict.",
+    "Decide on writer publish policy (currently open — writers can publish directly).",
+    "Consider improving slugify to preserve underscores as separators.",
+    "Consider allowing bearer-token logout."
+  ],
+  "critical_code_review_comments": [
+    "MongoDB `_id` leak pattern: any code that does `doc = model.model_dump(); insert_one(doc); return doc` will leak _id. Only /api/articles POST was affected; other endpoints correctly use `find_one({}, {'_id': 0})` or return fresh model dumps.",
+    "seed_data() is not idempotent per-item — only runs when the whole collection is empty. Adding a new demo article requires wiping the collection.",
+    "`get_current_user` catches expired sessions but doesn't delete them — orphaned sessions accumulate.",
+    "No pagination on /api/admin/users (hard cap 500) or /api/my/articles (hard cap 200). OK for now but should be surfaced.",
+    "CORS uses `allow_credentials=True` with `allow_origins='*'` fallback — browsers reject this combination. Ensure CORS_ORIGINS is set to explicit origins in production.",
+    "`@app.on_event` is deprecated in FastAPI; use lifespan handler."
+  ],
+  "updated_files": [
+    "/app/backend/server.py (fixed ObjectId leak in POST /api/articles)",
+    "/app/backend/tests/backend_test.py (new)"
+  ],
+  "success_rate": {"backend": "100% (23/23 after fix)", "frontend": "not tested"},
+  "test_credentials": "Seeded ephemeral MongoDB users+sessions (TEST_ prefix) inside pytest fixtures; auto-cleaned on teardown.",
+  "seed_data_creation": "Two session-scoped fixtures (admin_session, writer_session) inserted test users + user_sessions via mongosh, cleaned up after run.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend fully green. Next agent should focus on frontend UI/integration. Auth flow tested only via manual DB-seeded sessions (real Emergent OAuth not tested — expected). Storage upload works end-to-end (PNG uploaded + downloadable via /api/files/{path}).",
+  "rca of the issue": "ObjectId leak in POST /api/articles: motor's insert_one() mutates the input dict to add `_id: ObjectId(...)`. Handler stored `doc = art.model_dump()`, awaited insert_one(doc), then `return doc` — but doc now contained an ObjectId. FastAPI's jsonable_encoder cannot serialize ObjectId → 500. Fix: `doc.pop('_id', None)` before returning (applied). Alternative: re-fetch with `{'_id': 0}` projection."
+}

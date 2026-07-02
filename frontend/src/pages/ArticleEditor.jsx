@@ -1,0 +1,237 @@
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { api, resolveImage } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
+import { RichEditor } from "@/components/RichEditor";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ImageIcon, Save, Send, X } from "lucide-react";
+import { toast } from "sonner";
+
+export const ArticleEditor = () => {
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const [categories, setCategories] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const coverRef = useRef(null);
+
+  const [form, setForm] = useState({
+    title: "",
+    excerpt: "",
+    content_html: "",
+    cover_image: "",
+    category_slug: "",
+    tags: "",
+    status: "draft",
+  });
+
+  useEffect(() => {
+    if (!loading && !user) navigate("/", { replace: true });
+  }, [user, loading, navigate]);
+
+  useEffect(() => {
+    api.get("/categories").then(r => setCategories(r.data || []));
+    if (isEdit) {
+      api.get(`/my/articles/${id}`).then(r => {
+        const a = r.data;
+        setForm({
+          title: a.title,
+          excerpt: a.excerpt || "",
+          content_html: a.content_html || "",
+          cover_image: a.cover_image || "",
+          category_slug: a.category_slug,
+          tags: (a.tags || []).join(", "),
+          status: a.status,
+        });
+      });
+    }
+  }, [id, isEdit]);
+
+  const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }));
+
+  const uploadCover = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const { data } = await api.post("/upload", fd, { headers: { "Content-Type": "multipart/form-data" } });
+      set("cover_image", data.url);
+      toast.success("Kapak yüklendi");
+    } catch {
+      toast.error("Yükleme hatası");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const save = async (publish = false) => {
+    if (!form.title.trim()) { toast.error("Başlık gerekli"); return; }
+    if (!form.category_slug) { toast.error("Kategori seç"); return; }
+    setSaving(true);
+    try {
+      const payload = {
+        title: form.title.trim(),
+        excerpt: form.excerpt,
+        content_html: form.content_html,
+        cover_image: form.cover_image,
+        category_slug: form.category_slug,
+        tags: form.tags.split(",").map(t => t.trim()).filter(Boolean),
+        status: publish ? "published" : form.status,
+      };
+      if (isEdit) {
+        await api.patch(`/articles/${id}`, payload);
+      } else {
+        const { data } = await api.post("/articles", payload);
+        if (publish && data?.slug) {
+          toast.success("Yayınlandı");
+          navigate(`/makale/${data.slug}`);
+          return;
+        }
+      }
+      toast.success(publish ? "Yayınlandı" : "Kaydedildi");
+      navigate("/dashboard");
+    } catch (e) {
+      toast.error(e?.response?.data?.detail || "Kayıt hatası");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || !user) {
+    return <div className="max-w-7xl mx-auto px-4 py-20 text-center font-jetbrains text-white/60">yükleniyor...</div>;
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="article-editor">
+      <button onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 font-jetbrains text-[11px] uppercase tracking-widest text-white/60 hover:text-[#10B981]">
+        <ArrowLeft size={14} /> Panele Dön
+      </button>
+
+      <div className="mt-4 flex items-end justify-between border-b border-white/10 pb-6">
+        <div>
+          <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">// {isEdit ? "editor.update" : "editor.new"}</div>
+          <h1 className="font-outfit font-bold text-3xl md:text-4xl text-white mt-1">{isEdit ? "Makaleyi Düzenle" : "Yeni Makale"}</h1>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            data-testid="save-draft-btn"
+            onClick={() => save(false)}
+            disabled={saving}
+            className="rounded-none bg-transparent border border-white/20 hover:border-white text-white font-jetbrains text-[11px] uppercase tracking-widest h-10 px-4"
+          >
+            <Save size={14} className="mr-2" /> Taslak Kaydet
+          </Button>
+          <Button
+            data-testid="publish-btn"
+            onClick={() => save(true)}
+            disabled={saving}
+            className="rounded-none bg-[#10B981] hover:bg-[#0EA371] text-black font-jetbrains text-[11px] uppercase tracking-widest h-10 px-4"
+          >
+            <Send size={14} className="mr-2" /> Yayınla
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
+        <div className="lg:col-span-8 space-y-4">
+          <input
+            data-testid="editor-title"
+            value={form.title}
+            onChange={(e) => set("title", e.target.value)}
+            placeholder="Makale başlığı..."
+            className="w-full bg-transparent text-3xl md:text-4xl font-outfit font-bold text-white outline-none border-b border-white/10 focus:border-[#10B981] pb-3 placeholder:text-white/20"
+          />
+          <textarea
+            data-testid="editor-excerpt"
+            value={form.excerpt}
+            onChange={(e) => set("excerpt", e.target.value)}
+            placeholder="Kısa özet (isteğe bağlı)..."
+            rows={2}
+            className="w-full bg-transparent text-white/80 outline-none border-b border-white/10 focus:border-[#10B981] pb-3 placeholder:text-white/30 font-ibm-plex"
+          />
+
+          <RichEditor
+            value={form.content_html}
+            onChange={(html) => set("content_html", html)}
+          />
+        </div>
+
+        <aside className="lg:col-span-4 space-y-4">
+          <div className="border border-white/10 p-4">
+            <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981] mb-3">Kapak Görseli</h4>
+            {form.cover_image ? (
+              <div className="relative">
+                <img src={resolveImage(form.cover_image)} alt="" className="w-full aspect-video object-cover border border-white/10" />
+                <button
+                  onClick={() => set("cover_image", "")}
+                  data-testid="remove-cover"
+                  className="absolute top-2 right-2 p-1.5 bg-black/80 border border-white/20 hover:border-[#EF4444] text-white hover:text-[#EF4444]"
+                ><X size={12} /></button>
+              </div>
+            ) : (
+              <button
+                onClick={() => coverRef.current?.click()}
+                data-testid="upload-cover"
+                className="w-full aspect-video border border-dashed border-white/20 hover:border-[#10B981] flex flex-col items-center justify-center gap-2 text-white/40 hover:text-[#10B981] transition-colors"
+              >
+                <ImageIcon size={28} />
+                <span className="font-jetbrains text-[10px] uppercase tracking-widest">{uploading ? "yükleniyor..." : "kapak yükle"}</span>
+              </button>
+            )}
+            <input
+              ref={coverRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              data-testid="cover-input"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); e.target.value = ""; }}
+            />
+          </div>
+
+          <div className="border border-white/10 p-4 space-y-3">
+            <div>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Kategori</label>
+              <select
+                data-testid="editor-category"
+                value={form.category_slug}
+                onChange={(e) => set("category_slug", e.target.value)}
+                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#10B981] font-jetbrains text-sm text-white"
+              >
+                <option value="">Seç...</option>
+                {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Etiketler</label>
+              <input
+                data-testid="editor-tags"
+                value={form.tags}
+                onChange={(e) => set("tags", e.target.value)}
+                placeholder="virgülle ayır, örn: GEX, opsiyon"
+                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#10B981] font-jetbrains text-sm text-white placeholder:text-white/30"
+              />
+            </div>
+            <div>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Durum</label>
+              <div className="mt-2 flex gap-2">
+                <button
+                  onClick={() => set("status", "draft")}
+                  data-testid="status-draft"
+                  className={`flex-1 px-3 py-2 font-jetbrains text-[10px] uppercase tracking-widest ${form.status === "draft" ? "bg-white text-black" : "border border-white/10 text-white/70"}`}
+                >Taslak</button>
+                <button
+                  onClick={() => set("status", "published")}
+                  data-testid="status-published"
+                  className={`flex-1 px-3 py-2 font-jetbrains text-[10px] uppercase tracking-widest ${form.status === "published" ? "bg-[#10B981] text-black" : "border border-white/10 text-white/70"}`}
+                >Yayın</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+};

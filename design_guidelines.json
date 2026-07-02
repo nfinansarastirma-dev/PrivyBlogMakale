@@ -1,0 +1,107 @@
+{
+  "project_context": {
+    "domain": "Quantitative Finance & Algorithmic Trading Blog",
+    "theme": "dark",
+    "archetype": "Archetype 4 (Swiss & High-Contrast) / Retro-Futurism Terminal Look"
+  },
+  "colors": {
+    "background_base": "#050505",
+    "surface_main": "#121212",
+    "surface_glass": "bg-black/80 backdrop-blur-2xl border-white/10",
+    "primary": "#10B981",
+    "secondary": "#EF4444",
+    "accent_neutral": "#F59E0B",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A1A1AA",
+    "border_default": "#27272A",
+    "border_hover": "#52525B"
+  },
+  "typography": {
+    "headings": {
+      "family": "Outfit",
+      "import_url": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap",
+      "css_class": "font-outfit",
+      "usage": "Article titles, Section headers"
+    },
+    "body": {
+      "family": "IBM Plex Sans",
+      "import_url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap",
+      "css_class": "font-ibm-plex",
+      "usage": "Main article content, paragraphs"
+    },
+    "monospace": {
+      "family": "JetBrains Mono",
+      "import_url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap",
+      "css_class": "font-jetbrains",
+      "usage": "Financial tickers, tags, meta info, code blocks"
+    }
+  },
+  "layout_spacing": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "grid_bento": "grid grid-cols-1 md:grid-cols-12 gap-6",
+    "borders": "border border-white/10",
+    "radius": "rounded-none"
+  },
+  "ui_components": {
+    "financial_ticker": {
+      "description": "Continuous fast-marquee at the very top displaying BIST/Wall Street stock prices with TF AL (Green) and TF SAT (Red) indicators.",
+      "styles": "bg-[#050505] text-xs font-jetbrains py-2 border-b border-white/10 flex items-center gap-8"
+    },
+    "navbar": {
+      "description": "Sticky top navigation",
+      "links": ["Anasayfa", "Kategoriler", "Eğitimler", "Makaleler", "Arama", "Giriş Yap"],
+      "styles": "sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 py-4"
+    },
+    "hero_article": {
+      "description": "Featured article mimicking magazine layout.",
+      "styles": "col-span-full lg:col-span-8 relative min-h-[60vh] border border-white/10 group overflow-hidden"
+    },
+    "sidebar_trending": {
+      "description": "Right side column showing trending/latest articles.",
+      "styles": "col-span-full lg:col-span-4 flex flex-col gap-6"
+    },
+    "article_card": {
+      "description": "Standard card for grid layout.",
+      "styles": "flex flex-col border border-white/10 bg-[#121212] group hover:border-white/30 transition-colors"
+    },
+    "admin_dashboard": {
+      "description": "Writer/Admin panel for managing content.",
+      "styles": "Strict control room grid, Shadcn UI customized to dark theme with 0px radius."
+    }
+  },
+  "image_urls": {
+    "hero_featured": {
+      "url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3",
+      "description": "stock market candlestick chart on dark screen"
+    },
+    "article_thumbnails": [
+      {
+        "url": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+        "description": "bitcoin trading chart"
+      },
+      {
+        "url": "https://images.pexels.com/photos/6770610/pexels-photo-6770610.jpeg",
+        "description": "financial growth charts"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1639305239797-41f29e441d78",
+        "description": "graphical user interface"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1644088379091-d574269d422f",
+        "description": "algorithmic trading abstract"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Build the application using React, Tailwind CSS, and Shadcn UI.",
+    "Enforce a strict DARK MODE only. The aesthetic is a high-contrast financial quant terminal (PrivyAlgo).",
+    "DO NOT USE PURPLE OR TEAL colors. Stick to Obsidian Black background, with bright Green (#10B981) and Red (#EF4444) for accents.",
+    "Implement the Magazine/Blog layout: Ticker -> Nav -> Hero Article -> 3-col Grid / Sidebar.",
+    "Add a scrolling marquee ticker at the top using 'react-fast-marquee' showing mock financial data like 'BIST THYAO +2.45% TF AL'.",
+    "All navigation and text should be in Turkish.",
+    "For the admin panel, implement layout for managing articles, using a WYSIWYG editor (e.g., tiptap) for article writing.",
+    "Ensure all interactive elements have 'data-testid' attributes (kebab-case, role-based).",
+    "Use the specific fonts: Outfit (Headings), IBM Plex Sans (Body), JetBrains Mono (Data/Tags). Add their Google Fonts import to the global CSS."
+  ]
+}

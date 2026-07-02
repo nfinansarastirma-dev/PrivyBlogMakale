@@ -18,7 +18,7 @@ const Btn = ({ onClick, active, children, tid, disabled }) => (
     onClick={onClick}
     disabled={disabled}
     data-testid={tid}
-    className={`p-2 border border-white/10 hover:border-[#10B981] hover:text-[#10B981] transition-colors ${active ? "bg-[#10B981] text-black border-[#10B981]" : "text-white/70"} disabled:opacity-30`}
+    className={`p-2 border border-white/10 hover:border-[#F59E0B] hover:text-[#F59E0B] transition-colors ${active ? "bg-[#F59E0B] text-black border-[#F59E0B]" : "text-white/70"} disabled:opacity-30`}
   >
     {children}
   </button>

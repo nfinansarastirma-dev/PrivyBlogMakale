@@ -27,9 +27,9 @@ export const Search = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" data-testid="search-page">
       <div className="border-b border-white/10 pb-8 mb-10">
-        <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">// search</div>
+        <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// search</div>
         <h1 className="font-outfit font-bold text-4xl md:text-5xl text-white mt-2">Arama</h1>
-        <form onSubmit={submit} className="mt-6 flex items-center border border-white/10 focus-within:border-[#10B981] max-w-2xl">
+        <form onSubmit={submit} className="mt-6 flex items-center border border-white/10 focus-within:border-[#F59E0B] max-w-2xl">
           <SearchIcon size={16} className="ml-3 text-white/50" />
           <input
             data-testid="search-page-input"
@@ -38,7 +38,7 @@ export const Search = () => {
             placeholder="Anahtar kelime..."
             className="flex-1 bg-transparent px-3 py-3 outline-none text-white placeholder:text-white/40 font-jetbrains text-sm"
           />
-          <button data-testid="search-page-submit" type="submit" className="px-5 py-3 bg-[#10B981] text-black font-jetbrains text-[11px] uppercase tracking-widest hover:bg-[#F59E0B]">
+          <button data-testid="search-page-submit" type="submit" className="px-5 py-3 bg-[#F59E0B] text-black font-jetbrains text-[11px] uppercase tracking-widest hover:bg-[#10B981]">
             Ara
           </button>
         </form>

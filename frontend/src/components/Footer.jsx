@@ -11,7 +11,11 @@ export const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 border border-[#10B981] flex items-center justify-center font-jetbrains text-[#10B981] font-bold">P</div>
+            <img
+              src="https://customer-assets.emergentagent.com/job_privyalgo-blog/artifacts/b8het9y5_logo-horizontal.png"
+              alt="PrivyAlgo"
+              className="h-12 w-12 object-contain"
+            />
             <div>
               <div className="font-outfit font-bold text-xl text-white">PrivyAlgo Blog</div>
               <div className="font-jetbrains text-[10px] text-white/40 uppercase tracking-widest">nFinans · Kantitatif Araştırma</div>
@@ -23,7 +27,7 @@ export const Footer = () => {
         </div>
 
         <div>
-          <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Kategoriler</h4>
+          <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Kategoriler</h4>
           <ul className="mt-4 space-y-2 text-sm">
             {categories.map(c => (
               <li key={c.slug}>
@@ -36,12 +40,12 @@ export const Footer = () => {
         </div>
 
         <div>
-          <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Bağlantılar</h4>
+          <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Bağlantılar</h4>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><a href="https://privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#F59E0B]">PrivyAlgo Terminal ↗</a></li>
-            <li><a href="https://bist.privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#F59E0B]">BIST Terminal ↗</a></li>
-            <li><a href="https://wallstreet.privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#F59E0B]">Wall Street Terminal ↗</a></li>
-            <li><a href="https://www.youtube.com/@NFinans" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#F59E0B]">YouTube @NFinans ↗</a></li>
+            <li><a href="https://privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981]">PrivyAlgo Terminal ↗</a></li>
+            <li><a href="https://bist.privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981]">BIST Terminal ↗</a></li>
+            <li><a href="https://wallstreet.privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981]">Wall Street Terminal ↗</a></li>
+            <li><a href="https://www.youtube.com/@NFinans" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981]">YouTube @NFinans ↗</a></li>
           </ul>
         </div>
       </div>

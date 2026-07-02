@@ -22,10 +22,10 @@ export const ArticleCard = ({ article, variant = "grid" }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
         <div className="relative z-10 flex flex-col justify-end h-full p-6 md:p-10">
           <div className="inline-flex items-center gap-2 font-jetbrains text-[10px] uppercase tracking-widest">
-            <span className="bg-[#10B981] text-black px-2 py-1">Öne Çıkan</span>
+            <span className="bg-[#F59E0B] text-black px-2 py-1">Öne Çıkan</span>
             <span className="border border-white/20 px-2 py-1 text-white/90">{article.category_name}</span>
           </div>
-          <h1 className="font-outfit font-bold text-3xl md:text-5xl leading-[1.05] mt-4 text-white group-hover:text-[#10B981] transition-colors max-w-3xl">
+          <h1 className="font-outfit font-bold text-3xl md:text-5xl leading-[1.05] mt-4 text-white group-hover:text-[#F59E0B] transition-colors max-w-3xl">
             {article.title}
           </h1>
           {article.excerpt && (
@@ -52,8 +52,8 @@ export const ArticleCard = ({ article, variant = "grid" }) => {
       >
         <div className="w-24 h-24 flex-shrink-0 bg-cover bg-center border border-white/10" style={{ backgroundImage: `url(${img})` }} />
         <div className="flex-1 min-w-0">
-          <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">{article.category_name}</span>
-          <h3 className="font-outfit font-semibold text-white text-sm md:text-base mt-1 leading-snug line-clamp-3 group-hover:text-[#10B981] transition-colors">
+          <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">{article.category_name}</span>
+          <h3 className="font-outfit font-semibold text-white text-sm md:text-base mt-1 leading-snug line-clamp-3 group-hover:text-[#F59E0B] transition-colors">
             {article.title}
           </h3>
           <p className="mt-1 font-jetbrains text-[10px] uppercase tracking-widest text-white/40">{date}</p>
@@ -71,11 +71,11 @@ export const ArticleCard = ({ article, variant = "grid" }) => {
       <div className="aspect-[16/10] bg-cover bg-center border-b border-white/10" style={{ backgroundImage: `url(${img})` }} />
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex items-center gap-3 font-jetbrains text-[10px] uppercase tracking-widest">
-          <span className="text-[#10B981]">{article.category_name}</span>
+          <span className="text-[#F59E0B]">{article.category_name}</span>
           <span className="text-white/30">·</span>
           <span className="text-white/50">{date}</span>
         </div>
-        <h3 className="font-outfit font-bold text-xl text-white mt-3 leading-tight group-hover:text-[#10B981] transition-colors line-clamp-2">
+        <h3 className="font-outfit font-bold text-xl text-white mt-3 leading-tight group-hover:text-[#F59E0B] transition-colors line-clamp-2">
           {article.title}
         </h3>
         {article.excerpt && (

@@ -42,7 +42,7 @@ export const Article = () => {
     return (
       <div className="max-w-4xl mx-auto px-4 py-24 text-center">
         <p className="font-outfit text-3xl text-white">Makale bulunamadı</p>
-        <Link to="/" className="mt-4 inline-flex items-center gap-2 text-[#10B981] hover:text-white font-jetbrains text-xs uppercase tracking-widest">
+        <Link to="/" className="mt-4 inline-flex items-center gap-2 text-[#F59E0B] hover:text-white font-jetbrains text-xs uppercase tracking-widest">
           <ArrowLeft size={14} /> Ana sayfaya dön
         </Link>
       </div>
@@ -66,7 +66,7 @@ export const Article = () => {
           <Link
             to={`/kategori/${article.category_slug}`}
             data-testid="article-category-badge"
-            className="inline-block bg-[#10B981] text-black px-3 py-1 font-jetbrains text-[10px] uppercase tracking-widest hover:bg-[#F59E0B]"
+            className="inline-block bg-[#F59E0B] text-black px-3 py-1 font-jetbrains text-[10px] uppercase tracking-widest hover:bg-[#10B981]"
           >
             {article.category_name}
           </Link>
@@ -104,12 +104,12 @@ export const Article = () => {
 
         {article.tags?.length > 0 && (
           <div className="mt-10 pt-6 border-t border-white/10 flex flex-wrap items-center gap-2">
-            <Tag size={14} className="text-[#10B981]" />
+            <Tag size={14} className="text-[#F59E0B]" />
             {article.tags.map(t => (
               <Link
                 key={t}
                 to={`/arama?q=${encodeURIComponent(t)}`}
-                className="font-jetbrains text-[10px] uppercase tracking-widest border border-white/10 px-2 py-1 text-white/70 hover:border-[#10B981] hover:text-[#10B981]"
+                className="font-jetbrains text-[10px] uppercase tracking-widest border border-white/10 px-2 py-1 text-white/70 hover:border-[#F59E0B] hover:text-[#F59E0B]"
               >
                 #{t}
               </Link>
@@ -122,12 +122,12 @@ export const Article = () => {
           {article.author_picture ? (
             <img src={article.author_picture} alt="" className="w-14 h-14 border border-white/10 object-cover" />
           ) : (
-            <div className="w-14 h-14 border border-[#10B981] flex items-center justify-center font-jetbrains text-[#10B981] font-bold text-xl">
+            <div className="w-14 h-14 border border-[#F59E0B] flex items-center justify-center font-jetbrains text-[#F59E0B] font-bold text-xl">
               {article.author_name?.[0]?.toUpperCase() || "?"}
             </div>
           )}
           <div>
-            <p className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Yazar</p>
+            <p className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Yazar</p>
             <p className="font-outfit font-bold text-white text-lg">{article.author_name}</p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export const Article = () => {
       {related.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
           <div className="border-b border-white/10 pb-3 mb-8">
-            <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">// related</div>
+            <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// related</div>
             <h2 className="font-outfit font-bold text-2xl md:text-3xl text-white mt-1">İlgili Makaleler</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

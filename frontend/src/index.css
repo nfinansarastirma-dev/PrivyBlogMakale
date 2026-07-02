@@ -14,19 +14,19 @@
         --card-foreground: 0 0% 98%;
         --popover: 0 0% 4%;
         --popover-foreground: 0 0% 98%;
-        --primary: 152 76% 40%;
+        --primary: 40 92% 50%;
         --primary-foreground: 0 0% 4%;
         --secondary: 0 0% 12%;
         --secondary-foreground: 0 0% 98%;
         --muted: 0 0% 14%;
         --muted-foreground: 240 5% 65%;
-        --accent: 40 92% 50%;
+        --accent: 152 76% 40%;
         --accent-foreground: 0 0% 4%;
         --destructive: 0 84% 60%;
         --destructive-foreground: 0 0% 98%;
         --border: 0 0% 16%;
         --input: 0 0% 14%;
-        --ring: 152 76% 40%;
+        --ring: 40 92% 50%;
         --radius: 0rem;
     }
 }
@@ -46,7 +46,7 @@ html, body {
 .font-jetbrains { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 
 /* Selection */
-::selection { background: #10B981; color: #050505; }
+::selection { background: #F59E0B; color: #050505; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -81,16 +81,16 @@ html, body {
     line-height: 1.2;
 }
 .article-content h1 { font-size: 2.25rem; }
-.article-content h2 { font-size: 1.75rem; border-left: 3px solid #10B981; padding-left: 1rem; }
+.article-content h2 { font-size: 1.75rem; border-left: 3px solid #F59E0B; padding-left: 1rem; }
 .article-content h3 { font-size: 1.35rem; }
 .article-content p { margin: 1rem 0; }
-.article-content a { color: #10B981; text-decoration: underline; text-underline-offset: 4px; }
-.article-content a:hover { color: #F59E0B; }
+.article-content a { color: #F59E0B; text-decoration: underline; text-underline-offset: 4px; }
+.article-content a:hover { color: #10B981; }
 .article-content ul, .article-content ol { margin: 1rem 0; padding-left: 1.5rem; }
 .article-content ul li { list-style-type: disc; margin: 0.4rem 0; }
 .article-content ol li { list-style-type: decimal; margin: 0.4rem 0; }
 .article-content blockquote {
-    border-left: 3px solid #F59E0B;
+    border-left: 3px solid #10B981;
     padding: 0.5rem 1rem;
     color: #A1A1AA;
     font-style: italic;
@@ -103,7 +103,7 @@ html, body {
     border: 1px solid #27272A;
     padding: 0.15rem 0.4rem;
     font-size: 0.9em;
-    color: #10B981;
+    color: #F59E0B;
 }
 .article-content pre {
     background: #0A0A0A;
@@ -141,10 +141,10 @@ html, body {
 .tiptap-editor .ProseMirror h3 { font-family: 'Outfit'; font-size: 1.2rem; font-weight: 600; margin: 1rem 0 0.5rem; color: #fff; }
 .tiptap-editor .ProseMirror ul { list-style: disc; padding-left: 1.5rem; }
 .tiptap-editor .ProseMirror ol { list-style: decimal; padding-left: 1.5rem; }
-.tiptap-editor .ProseMirror blockquote { border-left: 3px solid #F59E0B; padding-left: 1rem; color: #A1A1AA; margin: 1rem 0; }
+.tiptap-editor .ProseMirror blockquote { border-left: 3px solid #10B981; padding-left: 1rem; color: #A1A1AA; margin: 1rem 0; }
 .tiptap-editor .ProseMirror img { max-width: 100%; margin: 1rem 0; border: 1px solid #27272A; }
-.tiptap-editor .ProseMirror a { color: #10B981; text-decoration: underline; }
-.tiptap-editor .ProseMirror code { font-family: 'JetBrains Mono'; background: #121212; padding: 0.15rem 0.4rem; color: #10B981; border: 1px solid #27272A; }
+.tiptap-editor .ProseMirror a { color: #F59E0B; text-decoration: underline; }
+.tiptap-editor .ProseMirror code { font-family: 'JetBrains Mono'; background: #121212; padding: 0.15rem 0.4rem; color: #F59E0B; border: 1px solid #27272A; }
 .tiptap-editor .ProseMirror pre { background: #0A0A0A; border: 1px solid #27272A; padding: 1rem; overflow-x: auto; }
 
 /* Ticker */
@@ -159,7 +159,7 @@ html, body {
     position: absolute;
     width: 12px;
     height: 12px;
-    border: 1px solid #10B981;
+    border: 1px solid #F59E0B;
 }
 .terminal-corner::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
 .terminal-corner::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }

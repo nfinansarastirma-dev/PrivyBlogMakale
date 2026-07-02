@@ -402,6 +402,11 @@ async def create_article(payload: ArticleCreate, session_token: Optional[str] = 
         i += 1
 
     now = now_iso()
+    # Writers cannot self-publish — only admins can. Force writer submissions to draft.
+    requested_status = payload.status if payload.status in ("draft", "published") else "draft"
+    if user.role != "admin" and requested_status == "published":
+        requested_status = "draft"
+
     art = Article(
         title=payload.title,
         slug=slug,
@@ -414,15 +419,15 @@ async def create_article(payload: ArticleCreate, session_token: Optional[str] = 
         author_id=user.user_id,
         author_name=user.name,
         author_picture=user.picture or "",
-        status=payload.status if payload.status in ("draft", "published") else "draft",
+        status=requested_status,
         featured=False,
         views=0,
         reading_minutes=compute_reading_minutes(payload.content_html or ""),
         created_at=now,
         updated_at=now,
-        published_at=now if payload.status == "published" else None,
+        published_at=now if requested_status == "published" else None,
     )
-    # Writers can only publish if role=admin; writers can also self-publish here (open policy)
+    # Writers can only save drafts; admin approval required for publish
     doc = art.model_dump()
     await db.articles.insert_one(doc)
     doc.pop("_id", None)
@@ -459,6 +464,9 @@ async def update_article(article_id: str, payload: ArticleUpdate, session_token:
         updates["category_slug"] = data["category_slug"]
         updates["category_name"] = cat["name"]
     if "status" in data and data["status"] in ("draft", "published"):
+        # Only admins can publish; writers can only save as draft
+        if data["status"] == "published" and user.role != "admin":
+            raise HTTPException(status_code=403, detail="Sadece admin makale yayınlayabilir")
         updates["status"] = data["status"]
         if data["status"] == "published" and not art.get("published_at"):
             updates["published_at"] = now_iso()

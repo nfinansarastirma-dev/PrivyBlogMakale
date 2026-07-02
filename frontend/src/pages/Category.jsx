@@ -23,7 +23,7 @@ export const Category = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" data-testid="category-page">
       <div className="border-b border-white/10 pb-8 mb-10">
-        <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">// category</div>
+        <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// category</div>
         <h1 className="font-outfit font-bold text-5xl md:text-6xl text-white mt-2 tracking-tight">{category?.name}</h1>
         {category?.description && <p className="mt-3 text-white/60 max-w-3xl text-lg">{category.description}</p>}
         <p className="mt-3 font-jetbrains text-[11px] uppercase tracking-widest text-white/40">{articles.length} makale bulundu</p>

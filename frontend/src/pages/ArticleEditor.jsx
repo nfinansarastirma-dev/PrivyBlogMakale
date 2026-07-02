@@ -106,13 +106,13 @@ export const ArticleEditor = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="article-editor">
-      <button onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 font-jetbrains text-[11px] uppercase tracking-widest text-white/60 hover:text-[#10B981]">
+      <button onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 font-jetbrains text-[11px] uppercase tracking-widest text-white/60 hover:text-[#F59E0B]">
         <ArrowLeft size={14} /> Panele Dön
       </button>
 
       <div className="mt-4 flex items-end justify-between border-b border-white/10 pb-6">
         <div>
-          <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">// {isEdit ? "editor.update" : "editor.new"}</div>
+          <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// {isEdit ? "editor.update" : "editor.new"}</div>
           <h1 className="font-outfit font-bold text-3xl md:text-4xl text-white mt-1">{isEdit ? "Makaleyi Düzenle" : "Yeni Makale"}</h1>
         </div>
         <div className="flex gap-2">
@@ -124,14 +124,16 @@ export const ArticleEditor = () => {
           >
             <Save size={14} className="mr-2" /> Taslak Kaydet
           </Button>
-          <Button
-            data-testid="publish-btn"
-            onClick={() => save(true)}
-            disabled={saving}
-            className="rounded-none bg-[#10B981] hover:bg-[#0EA371] text-black font-jetbrains text-[11px] uppercase tracking-widest h-10 px-4"
-          >
-            <Send size={14} className="mr-2" /> Yayınla
-          </Button>
+          {user.role === "admin" && (
+            <Button
+              data-testid="publish-btn"
+              onClick={() => save(true)}
+              disabled={saving}
+              className="rounded-none bg-[#F59E0B] hover:bg-[#D97706] text-black font-jetbrains text-[11px] uppercase tracking-widest h-10 px-4"
+            >
+              <Send size={14} className="mr-2" /> Yayınla
+            </Button>
+          )}
         </div>
       </div>
 
@@ -142,7 +144,7 @@ export const ArticleEditor = () => {
             value={form.title}
             onChange={(e) => set("title", e.target.value)}
             placeholder="Makale başlığı..."
-            className="w-full bg-transparent text-3xl md:text-4xl font-outfit font-bold text-white outline-none border-b border-white/10 focus:border-[#10B981] pb-3 placeholder:text-white/20"
+            className="w-full bg-transparent text-3xl md:text-4xl font-outfit font-bold text-white outline-none border-b border-white/10 focus:border-[#F59E0B] pb-3 placeholder:text-white/20"
           />
           <textarea
             data-testid="editor-excerpt"
@@ -150,7 +152,7 @@ export const ArticleEditor = () => {
             onChange={(e) => set("excerpt", e.target.value)}
             placeholder="Kısa özet (isteğe bağlı)..."
             rows={2}
-            className="w-full bg-transparent text-white/80 outline-none border-b border-white/10 focus:border-[#10B981] pb-3 placeholder:text-white/30 font-ibm-plex"
+            className="w-full bg-transparent text-white/80 outline-none border-b border-white/10 focus:border-[#F59E0B] pb-3 placeholder:text-white/30 font-ibm-plex"
           />
 
           <RichEditor
@@ -161,7 +163,7 @@ export const ArticleEditor = () => {
 
         <aside className="lg:col-span-4 space-y-4">
           <div className="border border-white/10 p-4">
-            <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981] mb-3">Kapak Görseli</h4>
+            <h4 className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B] mb-3">Kapak Görseli</h4>
             {form.cover_image ? (
               <div className="relative">
                 <img src={resolveImage(form.cover_image)} alt="" className="w-full aspect-video object-cover border border-white/10" />
@@ -175,7 +177,7 @@ export const ArticleEditor = () => {
               <button
                 onClick={() => coverRef.current?.click()}
                 data-testid="upload-cover"
-                className="w-full aspect-video border border-dashed border-white/20 hover:border-[#10B981] flex flex-col items-center justify-center gap-2 text-white/40 hover:text-[#10B981] transition-colors"
+                className="w-full aspect-video border border-dashed border-white/20 hover:border-[#F59E0B] flex flex-col items-center justify-center gap-2 text-white/40 hover:text-[#F59E0B] transition-colors"
               >
                 <ImageIcon size={28} />
                 <span className="font-jetbrains text-[10px] uppercase tracking-widest">{uploading ? "yükleniyor..." : "kapak yükle"}</span>
@@ -193,41 +195,48 @@ export const ArticleEditor = () => {
 
           <div className="border border-white/10 p-4 space-y-3">
             <div>
-              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Kategori</label>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Kategori</label>
               <select
                 data-testid="editor-category"
                 value={form.category_slug}
                 onChange={(e) => set("category_slug", e.target.value)}
-                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#10B981] font-jetbrains text-sm text-white"
+                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white"
               >
                 <option value="">Seç...</option>
                 {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Etiketler</label>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Etiketler</label>
               <input
                 data-testid="editor-tags"
                 value={form.tags}
                 onChange={(e) => set("tags", e.target.value)}
                 placeholder="virgülle ayır, örn: GEX, opsiyon"
-                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#10B981] font-jetbrains text-sm text-white placeholder:text-white/30"
+                className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white placeholder:text-white/30"
               />
             </div>
             <div>
-              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#10B981]">Durum</label>
+              <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Durum</label>
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={() => set("status", "draft")}
                   data-testid="status-draft"
                   className={`flex-1 px-3 py-2 font-jetbrains text-[10px] uppercase tracking-widest ${form.status === "draft" ? "bg-white text-black" : "border border-white/10 text-white/70"}`}
                 >Taslak</button>
-                <button
-                  onClick={() => set("status", "published")}
-                  data-testid="status-published"
-                  className={`flex-1 px-3 py-2 font-jetbrains text-[10px] uppercase tracking-widest ${form.status === "published" ? "bg-[#10B981] text-black" : "border border-white/10 text-white/70"}`}
-                >Yayın</button>
+                {user.role === "admin" && (
+                  <button
+                    onClick={() => set("status", "published")}
+                    data-testid="status-published"
+                    className={`flex-1 px-3 py-2 font-jetbrains text-[10px] uppercase tracking-widest ${form.status === "published" ? "bg-[#F59E0B] text-black" : "border border-white/10 text-white/70"}`}
+                  >Yayın</button>
+                )}
               </div>
+              {user.role !== "admin" && (
+                <p className="mt-2 font-jetbrains text-[9px] uppercase tracking-widest text-white/40">
+                  Sadece admin yayınlayabilir. Taslak olarak kaydedilir.
+                </p>
+              )}
             </div>
           </div>
         </aside>

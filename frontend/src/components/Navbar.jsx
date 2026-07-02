@@ -34,20 +34,22 @@ export const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" data-testid="nav-logo" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 border border-[#10B981] flex items-center justify-center font-jetbrains text-[#10B981] text-sm font-bold group-hover:bg-[#10B981] group-hover:text-black transition-colors">
-              P
-            </div>
-            <div className="flex flex-col leading-none">
+          <Link to="/" data-testid="nav-logo" className="flex items-center gap-3 group">
+            <img
+              src="https://customer-assets.emergentagent.com/job_privyalgo-blog/artifacts/b8het9y5_logo-horizontal.png"
+              alt="PrivyAlgo"
+              className="h-11 w-11 object-contain group-hover:scale-105 transition-transform"
+            />
+            <div className="hidden sm:flex flex-col leading-none">
               <span className="font-outfit font-bold text-white text-lg tracking-tight">PrivyAlgo</span>
               <span className="font-jetbrains text-[9px] text-white/40 uppercase tracking-widest">Blog · nFinans</span>
             </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8 font-jetbrains text-[11px] uppercase tracking-widest">
-            <Link data-testid="nav-home" to="/" className="text-white/70 hover:text-[#10B981] transition-colors">Anasayfa</Link>
+            <Link data-testid="nav-home" to="/" className="text-white/70 hover:text-[#F59E0B] transition-colors">Anasayfa</Link>
             <div className="relative group">
-              <button data-testid="nav-categories" className="text-white/70 hover:text-[#10B981] transition-colors inline-flex items-center gap-1">
+              <button data-testid="nav-categories" className="text-white/70 hover:text-[#F59E0B] transition-colors inline-flex items-center gap-1">
                 Kategoriler
               </button>
               <div className="absolute top-full left-0 mt-3 min-w-[220px] bg-[#0A0A0A] border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
@@ -56,15 +58,15 @@ export const Navbar = () => {
                     key={c.slug}
                     to={`/kategori/${c.slug}`}
                     data-testid={`nav-cat-${c.slug}`}
-                    className="block px-4 py-2.5 text-white/70 hover:text-[#10B981] hover:bg-white/5 border-b border-white/5 last:border-b-0"
+                    className="block px-4 py-2.5 text-white/70 hover:text-[#F59E0B] hover:bg-white/5 border-b border-white/5 last:border-b-0"
                   >
                     {c.name}
                   </Link>
                 ))}
               </div>
             </div>
-            <Link data-testid="nav-education" to="/kategori/egitim" className="text-white/70 hover:text-[#10B981] transition-colors">Eğitimler</Link>
-            <a data-testid="nav-external" href="https://privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#F59E0B] transition-colors">Terminal ↗</a>
+            <Link data-testid="nav-education" to="/kategori/egitim" className="text-white/70 hover:text-[#F59E0B] transition-colors">Eğitimler</Link>
+            <a data-testid="nav-external" href="https://privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981] transition-colors">Terminal ↗</a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -76,14 +78,14 @@ export const Navbar = () => {
                 placeholder="Ara..."
                 className="bg-transparent px-3 py-2 text-sm outline-none text-white placeholder:text-white/40 w-40 font-jetbrains"
               />
-              <button data-testid="search-submit" type="submit" className="px-3 py-2 text-white/60 hover:text-[#10B981]">
+              <button data-testid="search-submit" type="submit" className="px-3 py-2 text-white/60 hover:text-[#F59E0B]">
                 <SearchIcon size={16} />
               </button>
             </form>
 
             {user ? (
               <div className="hidden md:flex items-center gap-2">
-                <Link to="/dashboard" data-testid="nav-dashboard" className="flex items-center gap-2 px-3 py-2 border border-white/10 hover:border-[#10B981] text-white/80 hover:text-[#10B981] font-jetbrains text-[11px] uppercase tracking-widest">
+                <Link to="/dashboard" data-testid="nav-dashboard" className="flex items-center gap-2 px-3 py-2 border border-white/10 hover:border-[#F59E0B] text-white/80 hover:text-[#F59E0B] font-jetbrains text-[11px] uppercase tracking-widest">
                   <LayoutDashboard size={14} /> Panel
                 </Link>
                 <button
@@ -98,7 +100,7 @@ export const Navbar = () => {
               <Button
                 onClick={startLogin}
                 data-testid="nav-login-btn"
-                className="hidden md:inline-flex bg-[#10B981] hover:bg-[#10B981]/90 text-black rounded-none font-jetbrains text-[11px] uppercase tracking-widest h-9 px-4"
+                className="hidden md:inline-flex bg-[#F59E0B] hover:bg-[#F59E0B]/90 text-black rounded-none font-jetbrains text-[11px] uppercase tracking-widest h-9 px-4"
               >
                 Giriş Yap
               </Button>
@@ -125,7 +127,7 @@ export const Navbar = () => {
                 placeholder="Ara..."
                 className="flex-1 bg-transparent px-3 py-2 text-sm outline-none text-white placeholder:text-white/40 font-jetbrains"
               />
-              <button type="submit" className="px-3 py-2 text-[#10B981]"><SearchIcon size={16} /></button>
+              <button type="submit" className="px-3 py-2 text-[#F59E0B]"><SearchIcon size={16} /></button>
             </form>
             <Link onClick={() => setMobileOpen(false)} to="/" className="block py-2 text-white/80">Anasayfa</Link>
             {categories.map(c => (
@@ -135,11 +137,11 @@ export const Navbar = () => {
             ))}
             {user ? (
               <>
-                <Link onClick={() => setMobileOpen(false)} to="/dashboard" className="block py-2 text-[#10B981]">Panel</Link>
+                <Link onClick={() => setMobileOpen(false)} to="/dashboard" className="block py-2 text-[#F59E0B]">Panel</Link>
                 <button onClick={() => { logout(); setMobileOpen(false); }} className="block py-2 text-[#EF4444]">Çıkış</button>
               </>
             ) : (
-              <button onClick={startLogin} className="w-full py-2 bg-[#10B981] text-black font-bold">Giriş Yap</button>
+              <button onClick={startLogin} className="w-full py-2 bg-[#F59E0B] text-black font-bold">Giriş Yap</button>
             )}
           </div>
         </div>

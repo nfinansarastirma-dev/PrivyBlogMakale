@@ -35,8 +35,8 @@ export const Home = () => {
     })();
   }, []);
 
-  const hero = featured[0];
-  const heroSide = featured.slice(1, 3);
+  const hero = featured[0] || latest[0];
+  const otherFeatured = featured.slice(1);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -47,12 +47,6 @@ export const Home = () => {
             <ArticleCard article={hero} variant="hero" />
           ) : (
             <EmptyHero />
-          )}
-
-          {heroSide.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              {heroSide.map((a) => <ArticleCard key={a.id} article={a} />)}
-            </div>
           )}
         </div>
 
@@ -101,6 +95,20 @@ export const Home = () => {
         </aside>
       </section>
 
+      {/* Section: Additional Featured Articles */}
+      {otherFeatured.length > 0 && (
+        <section className="mt-14" data-testid="featured-section">
+          <SectionHeader
+            title="Öne Çıkan Makaleler"
+            subtitle="Editör seçimi ile PrivyAlgo'nun mercek altına aldığı yazılar"
+            eyebrow="featured"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {otherFeatured.map(a => <ArticleCard key={a.id} article={a} />)}
+          </div>
+        </section>
+      )}
+
       {/* Section: Categories bar */}
       <section className="mt-14 border-y border-white/10 py-4 flex items-center gap-3 overflow-x-auto no-scrollbar" data-testid="category-bar">
         <span className="font-jetbrains text-[10px] uppercase tracking-widest text-white/40 whitespace-nowrap">Kategoriler //</span>
@@ -118,7 +126,7 @@ export const Home = () => {
 
       {/* Section: Latest articles grid */}
       <section className="mt-14" data-testid="latest-section">
-        <SectionHeader title="Son Makaleler" subtitle="En yeni analiz ve içgörüler" />
+        <SectionHeader title="Son Makaleler" subtitle="En yeni analiz ve içgörüler" eyebrow="latest" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {latest.slice(0, 9).map(a => <ArticleCard key={a.id} article={a} />)}
         </div>
@@ -144,10 +152,10 @@ export const Home = () => {
   );
 };
 
-const SectionHeader = ({ title, subtitle, right }) => (
+const SectionHeader = ({ title, subtitle, right, eyebrow }) => (
   <div className="flex items-end justify-between border-b border-white/10 pb-4 mb-8">
     <div>
-      <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// {title}</div>
+      <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// {eyebrow || title}</div>
       <h2 className="font-outfit font-bold text-3xl md:text-4xl text-white mt-1">{title}</h2>
       {subtitle && <p className="mt-1 text-white/50 text-sm">{subtitle}</p>}
     </div>

@@ -27,6 +27,7 @@ export const ArticleEditor = () => {
     category_slugs: [],
     tags: "",
     status: "draft",
+    featured: false,
   });
 
   useEffect(() => {
@@ -85,6 +86,9 @@ export const ArticleEditor = () => {
         tags: form.tags.split(",").map(t => t.trim()).filter(Boolean),
         status: publish ? "published" : form.status,
       };
+      if (user.role === "admin") {
+        payload.featured = !!form.featured;
+      }
       if (isEdit) {
         await api.patch(`/articles/${id}`, payload);
       } else {
@@ -306,6 +310,28 @@ export const ArticleEditor = () => {
                 </p>
               )}
             </div>
+
+            {user.role === "admin" && (
+              <div className="pt-2 border-t border-white/10">
+                <label className="flex items-center gap-3 cursor-pointer group" data-testid="editor-featured-toggle">
+                  <input
+                    type="checkbox"
+                    checked={!!form.featured}
+                    onChange={(e) => set("featured", e.target.checked)}
+                    className="accent-[#F59E0B] w-4 h-4"
+                    data-testid="editor-featured-input"
+                  />
+                  <div className="flex-1">
+                    <p className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B] group-hover:text-white transition-colors">
+                      ★ Öne Çıkar
+                    </p>
+                    <p className="font-jetbrains text-[9px] uppercase tracking-widest text-white/40">
+                      Ana sayfa hero/featured bölümünde görünür
+                    </p>
+                  </div>
+                </label>
+              </div>
+            )}
           </div>
         </aside>
       </div>

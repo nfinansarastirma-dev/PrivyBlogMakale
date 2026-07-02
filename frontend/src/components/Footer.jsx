@@ -14,7 +14,7 @@ export const Footer = () => {
             <img
               src="https://customer-assets.emergentagent.com/job_privyalgo-blog/artifacts/b8het9y5_logo-horizontal.png"
               alt="PrivyAlgo"
-              className="h-24 w-24 object-contain"
+              className="h-36 w-36 object-contain"
             />
             <div>
               <div className="font-outfit font-bold text-2xl text-white">PrivyAlgo Blog</div>

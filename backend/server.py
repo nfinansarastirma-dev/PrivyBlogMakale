@@ -453,7 +453,7 @@ async def create_article(payload: ArticleCreate, session_token: Optional[str] = 
         author_name=user.name,
         author_picture=user.picture or "",
         status=requested_status,
-        featured=False,
+        featured=bool(payload.featured) if user.role == "admin" else False,
         views=0,
         reading_minutes=compute_reading_minutes(payload.content_html or ""),
         created_at=now,

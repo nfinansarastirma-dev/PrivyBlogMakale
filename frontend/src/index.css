@@ -119,6 +119,16 @@ html, body {
     margin: 1.5rem 0;
     border: 1px solid #27272A;
 }
+.article-content iframe,
+.article-content .yt-embed,
+.article-content div[data-youtube-video] iframe {
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    max-height: 480px;
+    margin: 1.5rem 0;
+    border: 1px solid #27272A;
+    background: #000;
+}
 .article-content strong { color: #ffffff; font-weight: 700; }
 
 /* Tiptap editor styles */
@@ -143,6 +153,15 @@ html, body {
 .tiptap-editor .ProseMirror ol { list-style: decimal; padding-left: 1.5rem; }
 .tiptap-editor .ProseMirror blockquote { border-left: 3px solid #10B981; padding-left: 1rem; color: #A1A1AA; margin: 1rem 0; }
 .tiptap-editor .ProseMirror img { max-width: 100%; margin: 1rem 0; border: 1px solid #27272A; }
+.tiptap-editor .ProseMirror iframe,
+.tiptap-editor .ProseMirror div[data-youtube-video] iframe {
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    max-height: 400px;
+    border: 1px solid #27272A;
+    background: #000;
+    margin: 1rem 0;
+}
 .tiptap-editor .ProseMirror a { color: #F59E0B; text-decoration: underline; }
 .tiptap-editor .ProseMirror code { font-family: 'JetBrains Mono'; background: #121212; padding: 0.15rem 0.4rem; color: #F59E0B; border: 1px solid #27272A; }
 .tiptap-editor .ProseMirror pre { background: #0A0A0A; border: 1px solid #27272A; padding: 1rem; overflow-x: auto; }

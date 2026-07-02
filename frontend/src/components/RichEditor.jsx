@@ -34,6 +34,7 @@ export const RichEditor = ({ value, onChange, placeholder = "Makalenizi buraya y
       Image.configure({ inline: false, allowBase64: false }),
       Link.configure({ openOnClick: false, autolink: true, HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } }),
       Placeholder.configure({ placeholder }),
+      Youtube.configure({ controls: true, nocookie: true, width: 720, height: 405, HTMLAttributes: { class: "yt-embed" } }),
     ],
     content: value || "",
     onUpdate: ({ editor }) => onChange?.(editor.getHTML()),
@@ -67,6 +68,16 @@ export const RichEditor = ({ value, onChange, placeholder = "Makalenizi buraya y
     }
   };
 
+  const addYoutube = () => {
+    const url = window.prompt("YouTube URL:", "https://www.youtube.com/watch?v=");
+    if (!url) return;
+    try {
+      editor.chain().focus().setYoutubeVideo({ src: url, width: 720, height: 405 }).run();
+    } catch (e) {
+      toast.error("Geçersiz YouTube linki");
+    }
+  };
+
   return (
     <div className="border border-white/10 bg-[#0A0A0A]" data-testid="rich-editor">
       <div className="flex flex-wrap gap-1 p-2 border-b border-white/10 bg-black/60 sticky top-0 z-10">
@@ -85,6 +96,7 @@ export const RichEditor = ({ value, onChange, placeholder = "Makalenizi buraya y
         <span className="w-px bg-white/10 mx-1" />
         <Btn tid="rt-link" onClick={promptLink} active={editor.isActive("link")}><LinkIcon size={14} /></Btn>
         <Btn tid="rt-image" onClick={() => fileRef.current?.click()}><ImageIcon size={14} /></Btn>
+        <Btn tid="rt-youtube" onClick={addYoutube}><YoutubeIcon size={14} /></Btn>
         <Btn tid="rt-hr" onClick={() => editor.chain().focus().setHorizontalRule().run()}><Minus size={14} /></Btn>
         <span className="w-px bg-white/10 mx-1" />
         <Btn tid="rt-undo" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()}><Undo size={14} /></Btn>

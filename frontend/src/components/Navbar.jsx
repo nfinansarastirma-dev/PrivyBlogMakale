@@ -33,16 +33,16 @@ export const Navbar = () => {
       className="sticky top-0 z-40 bg-black/85 backdrop-blur-xl border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-24">
+        <div className="flex items-center justify-between h-32">
           <Link to="/" data-testid="nav-logo" className="flex items-center gap-4 group">
             <img
               src="https://customer-assets.emergentagent.com/job_privyalgo-blog/artifacts/b8het9y5_logo-horizontal.png"
               alt="PrivyAlgo"
-              className="h-20 w-20 md:h-20 md:w-20 object-contain group-hover:scale-105 transition-transform"
+              className="h-28 w-28 md:h-28 md:w-28 object-contain group-hover:scale-105 transition-transform"
             />
-            <div className="hidden sm:flex flex-col leading-none">
-              <span className="font-outfit font-bold text-white text-2xl tracking-tight">PrivyAlgo Blog</span>
-              <span className="font-jetbrains text-[10px] text-white/40 uppercase tracking-widest mt-1">nFinans · Kantitatif Araştırma</span>
+            <div className="hidden md:flex flex-col leading-none">
+              <span className="font-outfit font-bold text-white text-xl tracking-tight">PrivyAlgo Blog</span>
+              <span className="font-jetbrains text-[9px] text-white/40 uppercase tracking-widest mt-1">nFinans · Kantitatif Araştırma</span>
             </div>
           </Link>
 

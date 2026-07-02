@@ -4,10 +4,11 @@ import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
+import { Youtube } from "@tiptap/extension-youtube";
 import { useRef } from "react";
 import {
   Bold, Italic, Underline as UIcon, Heading1, Heading2, Heading3, List, ListOrdered,
-  Quote, Code, Link as LinkIcon, Image as ImageIcon, Undo, Redo, Minus
+  Quote, Code, Link as LinkIcon, Image as ImageIcon, Undo, Redo, Minus, Youtube as YoutubeIcon
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";

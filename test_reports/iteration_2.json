@@ -1,0 +1,27 @@
+{
+  "summary": "Frontend regression test for Youtube ReferenceError on /dashboard/new. Bug fix VERIFIED: page loads cleanly, RichEditor renders, all 16 toolbar buttons including rt-youtube present, and YouTube embed via prompt successfully creates a youtube-nocookie iframe in the editor content. Zero console errors / pageerrors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "warnings": [
+      {"component": "RichEditor", "issue": "Tiptap console warning: Duplicate extension names found: ['link', 'underline']. StarterKit v3 already ships Link + Underline; importing @tiptap/extension-link and @tiptap/extension-underline separately duplicates them. Non-breaking but should be cleaned up (either drop the separate imports or disable them in StarterKit.configure({ link: false, underline: false }))."}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional: silence Tiptap duplicate-extension warning for 'link' and 'underline' in RichEditor.jsx by removing the separate imports (StarterKit v3 includes them) or disabling them in StarterKit config."
+  ],
+  "critical_code_review_comments": [
+    "RichEditor.jsx duplicates Link + Underline extensions with StarterKit (Tiptap 3). Harmless today, could cause issues with future config."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "not tested", "frontend": "100%"},
+  "test_credentials": "Seeded admin via mongosh. session_token=test_session_1783032450435, user_id=test-user-1783032450435",
+  "seed_data_creation": "Inserted 1 admin user + 1 session in test_database (users, user_sessions).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Editor page fully functional. YouTube iframe embed confirmed (src=https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ). Only outstanding item is the duplicate-extension Tiptap warning.",
+  "rca of the issue": "Root cause was missing `import { Youtube } from '@tiptap/extension-youtube'` in RichEditor.jsx despite Youtube.configure(...) and setYoutubeVideo() usage. Fix (import added at line 7 + YoutubeIcon at line 11) resolves the ReferenceError. Verified by loading /dashboard/new with an admin session cookie, confirming rich-editor + rt-youtube render with 0 runtime errors, and successfully embedding a YouTube URL."
+}

@@ -1,38 +1,29 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { api } from "@/lib/api";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
-// REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+// Google OAuth backend redirects here with ?token=<jwt>
 export const AuthCallback = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
-  const hasProcessed = useRef(false);
+  const [params] = useSearchParams();
+  const { loginWithToken } = useAuth();
+  const done = useRef(false);
 
   useEffect(() => {
-    if (hasProcessed.current) return;
-    hasProcessed.current = true;
-
-    const hash = window.location.hash || "";
-    const params = new URLSearchParams(hash.replace(/^#/, ""));
-    const sessionId = params.get("session_id");
-    if (!sessionId) {
-      navigate("/", { replace: true });
+    if (done.current) return;
+    done.current = true;
+    const token = params.get("token");
+    const error = params.get("error");
+    if (error) {
+      navigate(`/login?error=${encodeURIComponent(error)}`, { replace: true });
       return;
     }
-
-    (async () => {
-      try {
-        const { data } = await api.post("/auth/session", null, {
-          headers: { "X-Session-ID": sessionId },
-        });
-        setUser(data.user);
-        navigate("/dashboard", { replace: true, state: { user: data.user } });
-      } catch (e) {
-        navigate("/", { replace: true });
-      }
-    })();
-  }, [navigate, setUser]);
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
+    }
+    loginWithToken(token).then(() => navigate("/dashboard", { replace: true }));
+  }, [params, navigate, loginWithToken]);
 
   return (
     <div className="min-h-[50vh] flex items-center justify-center">

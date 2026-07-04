@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { api, resolveImage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FileText, Star, Trash2, Edit3, Users, FolderPlus, Shield, PencilRuler, GraduationCap, Check, X } from "lucide-react";
+import { PlusCircle, FileText, Star, Trash2, Edit3, Users, FolderPlus, Shield, PencilRuler, GraduationCap, Check, X, KeyRound, Save } from "lucide-react";
 import { toast } from "sonner";
 
 export const Dashboard = () => {
@@ -25,7 +25,7 @@ export const Dashboard = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" data-testid="dashboard">
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-white/10 pb-8">
         <div>
-          <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// {isAdmin ? "admin.console" : "writer.console"}</div>
+          <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// {isAdmin ? "admin.console" : "user.console"}</div>
           <h1 className="font-outfit font-bold text-4xl md:text-5xl text-white mt-2">Yönetim Paneli</h1>
           <div className="mt-3 flex items-center gap-3">
             {user.picture ? (
@@ -36,7 +36,7 @@ export const Dashboard = () => {
             <div>
               <p className="text-white text-sm font-outfit font-semibold">{user.name}</p>
               <p className="font-jetbrains text-[10px] uppercase tracking-widest text-white/50">
-                {isAdmin ? <span className="text-[#10B981]">admin</span> : "writer"} · {user.email}
+                {isAdmin ? <span className="text-[#10B981]">admin</span> : "user"} · {user.email}
               </p>
             </div>
           </div>
@@ -219,13 +219,13 @@ const UsersTab = () => {
             <button data-testid={`toggle-edu-${u.user_id}`} onClick={() => toggleEdu(u)} className={`px-3 py-1.5 border font-jetbrains text-[10px] uppercase tracking-widest inline-flex items-center gap-1 ${u.education_access ? "border-[#F59E0B] text-[#F59E0B]" : "border-white/10 text-white/70 hover:border-[#F59E0B] hover:text-[#F59E0B]"}`}>
               <GraduationCap size={12} /> {u.education_access ? "Eğitim kaldır" : "Eğitim ver"}
             </button>
-            {u.role === "writer" ? (
+            {u.role === "writer" || u.role === "user" ? (
               <button data-testid={`promote-${u.user_id}`} onClick={() => changeRole(u, "admin")} className="px-3 py-1.5 border border-white/10 hover:border-[#10B981] text-white/70 hover:text-[#10B981] font-jetbrains text-[10px] uppercase tracking-widest inline-flex items-center gap-1">
                 <Shield size={12} /> Admin
               </button>
             ) : (
-              <button data-testid={`demote-${u.user_id}`} onClick={() => changeRole(u, "writer")} className="px-3 py-1.5 border border-white/10 hover:border-white text-white/70 hover:text-white font-jetbrains text-[10px] uppercase tracking-widest">
-                Writer
+              <button data-testid={`demote-${u.user_id}`} onClick={() => changeRole(u, "user")} className="px-3 py-1.5 border border-white/10 hover:border-white text-white/70 hover:text-white font-jetbrains text-[10px] uppercase tracking-widest">
+                User
               </button>
             )}
           </div>
@@ -351,6 +351,104 @@ const CategoriesTab = () => {
           </div>
         ))}
       </div>
+    </div>
+  );
+};
+
+
+const ProfileTab = ({ user }) => {
+  const [name, setName] = useState(user.name || "");
+  const [bio, setBio] = useState(user.bio || "");
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [changing, setChanging] = useState(false);
+
+  const isGoogle = user.provider === "google";
+
+  const saveProfile = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await api.patch("/auth/profile", { name, bio });
+      toast.success("Profil güncellendi");
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Hata");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const changePassword = async (e) => {
+    e.preventDefault();
+    if (next !== confirm) return toast.error("Yeni şifreler eşleşmiyor");
+    if (next.length < 8) return toast.error("Yeni şifre en az 8 karakter");
+    setChanging(true);
+    try {
+      await api.post("/auth/change-password", { current_password: current, new_password: next });
+      toast.success("Şifre değiştirildi");
+      setCurrent(""); setNext(""); setConfirm("");
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Şifre değişmedi");
+    } finally {
+      setChanging(false);
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-testid="profile-tab">
+      <form onSubmit={saveProfile} className="border border-white/10 p-5 space-y-3">
+        <h3 className="font-outfit font-bold text-white">Profil Bilgileri</h3>
+        <p className="text-white/50 text-xs font-jetbrains uppercase tracking-widest">Görünen ad ve biyografi</p>
+        <div>
+          <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Ad</label>
+          <input data-testid="profile-name" value={name} onChange={e => setName(e.target.value)} className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white" />
+        </div>
+        <div>
+          <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Biyografi</label>
+          <textarea data-testid="profile-bio" value={bio} onChange={e => setBio(e.target.value)} rows={3} className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white" />
+        </div>
+        <Button type="submit" data-testid="profile-save" disabled={saving} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-none font-jetbrains text-[11px] uppercase tracking-widest">
+          <Save size={14} className="mr-2" /> Kaydet
+        </Button>
+        <p className="pt-3 border-t border-white/5 font-jetbrains text-[10px] uppercase tracking-widest text-white/40">
+          Email: <span className="text-white/70">{user.email}</span><br />
+          Sağlayıcı: <span className="text-white/70">{user.provider}</span>
+        </p>
+      </form>
+
+      <form onSubmit={changePassword} className="border border-white/10 p-5 space-y-3">
+        <div className="flex items-center gap-2">
+          <KeyRound size={16} className="text-[#F59E0B]" />
+          <h3 className="font-outfit font-bold text-white">Şifre Değiştir</h3>
+        </div>
+        {isGoogle ? (
+          <p className="text-white/50 text-xs font-jetbrains">Google hesabıyla giriş yaptığınız için burada bir şifre belirleyerek email/şifre ile de giriş yapabilirsiniz. Mevcut şifreyi boş bırakın.</p>
+        ) : (
+          <p className="text-white/50 text-xs font-jetbrains uppercase tracking-widest">Mevcut şifreniz ile yeni şifreyi belirleyin</p>
+        )}
+        {user.must_change_password && (
+          <div className="border border-[#F59E0B]/40 bg-[#F59E0B]/10 p-2 text-[#F59E0B] font-jetbrains text-[10px] uppercase tracking-widest">
+            ⚠️ İlk giriş — Lütfen varsayılan şifreyi değiştirin
+          </div>
+        )}
+        <div>
+          <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Mevcut Şifre</label>
+          <input data-testid="cp-current" type="password" value={current} onChange={e => setCurrent(e.target.value)} className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white" />
+        </div>
+        <div>
+          <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Yeni Şifre</label>
+          <input data-testid="cp-new" type="password" minLength={8} value={next} onChange={e => setNext(e.target.value)} className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white" />
+        </div>
+        <div>
+          <label className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">Yeni Şifre (Tekrar)</label>
+          <input data-testid="cp-confirm" type="password" minLength={8} value={confirm} onChange={e => setConfirm(e.target.value)} className="mt-2 w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white" />
+        </div>
+        <Button type="submit" data-testid="cp-submit" disabled={changing} className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-black rounded-none font-jetbrains text-[11px] uppercase tracking-widest">
+          <KeyRound size={14} className="mr-2" /> Şifreyi Güncelle
+        </Button>
+      </form>
     </div>
   );
 };

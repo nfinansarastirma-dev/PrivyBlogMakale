@@ -6,8 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 export const EducationGate = ({ compact = false }) => {
   const { user } = useAuth();
   const startLogin = () => {
-    const redirectUrl = window.location.origin + "/kategori/egitim";
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    window.location.href = "/login";
   };
 
   return (

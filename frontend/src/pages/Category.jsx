@@ -2,12 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "@/lib/api";
 import { ArticleCard } from "@/components/ArticleCard";
+import { useAuth } from "@/context/AuthContext";
+import { EducationGate } from "@/components/EducationGate";
+
+const EDUCATION_SLUG = "egitim";
 
 export const Category = () => {
   const { slug } = useParams();
+  const { user } = useAuth();
   const [articles, setArticles] = useState([]);
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const isEducation = slug === EDUCATION_SLUG;
+  const hasEducationAccess = user && (user.role === "admin" || user.education_access);
+  const gated = isEducation && !hasEducationAccess;
 
   useEffect(() => {
     setLoading(true);
@@ -26,10 +35,14 @@ export const Category = () => {
         <div className="font-jetbrains text-[10px] uppercase tracking-widest text-[#F59E0B]">// category</div>
         <h1 className="font-outfit font-bold text-5xl md:text-6xl text-white mt-2 tracking-tight">{category?.name}</h1>
         {category?.description && <p className="mt-3 text-white/60 max-w-3xl text-lg">{category.description}</p>}
-        <p className="mt-3 font-jetbrains text-[11px] uppercase tracking-widest text-white/40">{articles.length} makale bulundu</p>
+        {!gated && (
+          <p className="mt-3 font-jetbrains text-[11px] uppercase tracking-widest text-white/40">{articles.length} makale bulundu</p>
+        )}
       </div>
 
-      {loading ? (
+      {gated ? (
+        <EducationGate />
+      ) : loading ? (
         <p className="text-white/50 font-jetbrains text-xs uppercase tracking-widest">loading...</p>
       ) : articles.length === 0 ? (
         <div className="border border-dashed border-white/10 p-16 text-center">

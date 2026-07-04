@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { api, resolveImage } from "@/lib/api";
 import { Clock, Eye, Calendar, ArrowLeft, Tag } from "lucide-react";
 import { ArticleCard } from "@/components/ArticleCard";
+import { EducationGate } from "@/components/EducationGate";
 
 export const Article = () => {
   const { slug } = useParams();
@@ -103,11 +104,15 @@ export const Article = () => {
 
       {/* Content */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div
-          data-testid="article-content"
-          className="article-content"
-          dangerouslySetInnerHTML={{ __html: article.content_html || "<p><em>İçerik yakında...</em></p>" }}
-        />
+        {article.restricted ? (
+          <EducationGate />
+        ) : (
+          <div
+            data-testid="article-content"
+            className="article-content"
+            dangerouslySetInnerHTML={{ __html: article.content_html || "<p><em>İçerik yakında...</em></p>" }}
+          />
+        )}
 
         {article.tags?.length > 0 && (
           <div className="mt-10 pt-6 border-t border-white/10 flex flex-wrap items-center gap-2">

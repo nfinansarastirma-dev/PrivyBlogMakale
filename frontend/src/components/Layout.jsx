@@ -1,6 +1,7 @@
 import { Ticker } from "@/components/Ticker";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { NFinansBadge } from "@/components/NFinansBadge";
 
 export const Layout = ({ children }) => {
   return (
@@ -9,6 +10,7 @@ export const Layout = ({ children }) => {
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
+      <NFinansBadge />
     </div>
   );
 };

@@ -100,7 +100,13 @@ class User(BaseModel):
     picture: Optional[str] = ""
     role: str = "writer"  # "admin" | "writer"
     bio: Optional[str] = ""
+    education_access: bool = False  # can view /kategori/egitim content
     created_at: str
+
+
+class EducationMemberCreate(BaseModel):
+    email: str
+    note: Optional[str] = ""
 
 
 class Category(BaseModel):
@@ -274,8 +280,13 @@ async def create_session(response: Response, x_session_id: Optional[str] = Heade
             "picture": picture,
             "role": role,
             "bio": "",
+            "education_access": False,
             "created_at": now_iso(),
         })
+
+    # Sync education_access based on pre-approved email list
+    is_edu_member = await db.education_members.find_one({"email": email}, {"_id": 0}) is not None
+    await db.users.update_one({"user_id": user_id}, {"$set": {"education_access": is_edu_member}})
 
     # Store session
     expires_at = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
@@ -353,13 +364,31 @@ async def list_articles(
     return await cursor.to_list(limit)
 
 
+EDUCATION_SLUG = "egitim"
+
+
+def _is_education_article(art: dict) -> bool:
+    slugs = art.get("category_slugs") or ([art.get("category_slug")] if art.get("category_slug") else [])
+    return EDUCATION_SLUG in slugs
+
+
 @api_router.get("/articles/{slug}")
-async def get_article(slug: str):
+async def get_article(slug: str, session_token: Optional[str] = Cookie(None), authorization: Optional[str] = Header(None)):
     art = await db.articles.find_one({"slug": slug, "status": "published"}, {"_id": 0})
     if not art:
         raise HTTPException(status_code=404, detail="Not found")
+
+    # Restrict content_html for education articles if user is not approved
+    if _is_education_article(art):
+        user = await get_current_user(session_token, authorization)
+        if not user or (user.role != "admin" and not user.education_access):
+            art["content_html"] = ""
+            art["restricted"] = True
+            return art
+
     await db.articles.update_one({"id": art["id"]}, {"$inc": {"views": 1}})
     art["views"] += 1
+    art["restricted"] = False
     return art
 
 
@@ -567,6 +596,67 @@ async def update_user_role(user_id: str, role: str = Query(...), session_token: 
     if role not in ("admin", "writer"):
         raise HTTPException(status_code=400, detail="Invalid role")
     await db.users.update_one({"user_id": user_id}, {"$set": {"role": role}})
+    return {"ok": True}
+
+
+@api_router.patch("/admin/users/{user_id}/education")
+async def toggle_user_education(user_id: str, enabled: bool = Query(...), session_token: Optional[str] = Cookie(None), authorization: Optional[str] = Header(None)):
+    await require_admin(session_token, authorization)
+    u = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not u:
+        raise HTTPException(status_code=404, detail="User not found")
+    await db.users.update_one({"user_id": user_id}, {"$set": {"education_access": bool(enabled)}})
+    # Also mirror into education_members list so the flag persists across re-logins
+    if enabled:
+        if not await db.education_members.find_one({"email": u["email"]}):
+            await db.education_members.insert_one({
+                "id": str(uuid.uuid4()),
+                "email": u["email"],
+                "note": f"{u.get('name', '')} (via user toggle)",
+                "added_at": now_iso(),
+            })
+    else:
+        await db.education_members.delete_many({"email": u["email"]})
+    return {"ok": True}
+
+
+# -------- Education Members (pre-approved emails) --------
+@api_router.get("/admin/education-members")
+async def list_education_members(session_token: Optional[str] = Cookie(None), authorization: Optional[str] = Header(None)):
+    await require_admin(session_token, authorization)
+    members = await db.education_members.find({}, {"_id": 0}).sort("added_at", -1).to_list(500)
+    return members
+
+
+@api_router.post("/admin/education-members")
+async def add_education_member(payload: EducationMemberCreate, session_token: Optional[str] = Cookie(None), authorization: Optional[str] = Header(None)):
+    await require_admin(session_token, authorization)
+    email = (payload.email or "").strip().lower()
+    if "@" not in email:
+        raise HTTPException(status_code=400, detail="Geçerli bir email adresi girin")
+    if await db.education_members.find_one({"email": email}):
+        raise HTTPException(status_code=400, detail="Bu email zaten eklenmiş")
+    doc = {
+        "id": str(uuid.uuid4()),
+        "email": email,
+        "note": payload.note or "",
+        "added_at": now_iso(),
+    }
+    await db.education_members.insert_one(doc)
+    # If user already exists with this email, immediately grant access
+    await db.users.update_one({"email": email}, {"$set": {"education_access": True}})
+    return doc
+
+
+@api_router.delete("/admin/education-members/{member_id}")
+async def remove_education_member(member_id: str, session_token: Optional[str] = Cookie(None), authorization: Optional[str] = Header(None)):
+    await require_admin(session_token, authorization)
+    m = await db.education_members.find_one({"id": member_id}, {"_id": 0})
+    if not m:
+        raise HTTPException(status_code=404, detail="Not found")
+    await db.education_members.delete_one({"id": member_id})
+    # Revoke access on the user if they exist
+    await db.users.update_one({"email": m["email"]}, {"$set": {"education_access": False}})
     return {"ok": True}
 
 

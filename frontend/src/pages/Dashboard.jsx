@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { api, resolveImage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FileText, Star, Trash2, Edit3, Users, FolderPlus, Shield, PencilRuler } from "lucide-react";
+import { PlusCircle, FileText, Star, Trash2, Edit3, Users, FolderPlus, Shield, PencilRuler, GraduationCap, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const Dashboard = () => {
@@ -181,40 +181,127 @@ const UsersTab = () => {
     toast.success("Rol güncellendi");
     load();
   };
+  const toggleEdu = async (u) => {
+    await api.patch(`/admin/users/${u.user_id}/education`, null, { params: { enabled: !u.education_access } });
+    toast.success(u.education_access ? "Eğitim erişimi kaldırıldı" : "Eğitim erişimi verildi");
+    load();
+  };
 
   return (
     <div className="border border-white/10">
       <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-3 border-b border-white/10 bg-black/60 font-jetbrains text-[10px] uppercase tracking-widest text-white/50">
-        <div className="col-span-4">Kullanıcı</div>
-        <div className="col-span-4">Email</div>
+        <div className="col-span-3">Kullanıcı</div>
+        <div className="col-span-3">Email</div>
         <div className="col-span-2">Rol</div>
-        <div className="col-span-2 text-right">İşlem</div>
+        <div className="col-span-1">Eğitim</div>
+        <div className="col-span-3 text-right">İşlem</div>
       </div>
       {users.map(u => (
         <div key={u.user_id} data-testid={`user-row-${u.user_id}`} className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-4 py-4 border-b border-white/5 last:border-b-0 items-center">
-          <div className="col-span-4 flex items-center gap-3">
+          <div className="col-span-3 flex items-center gap-3">
             {u.picture ? <img src={u.picture} alt="" className="w-9 h-9 border border-white/10" /> : <div className="w-9 h-9 bg-[#F59E0B] text-black flex items-center justify-center font-jetbrains font-bold">{u.name?.[0]?.toUpperCase()}</div>}
-            <p className="text-white font-outfit font-semibold">{u.name}</p>
+            <p className="text-white font-outfit font-semibold truncate">{u.name}</p>
           </div>
-          <div className="col-span-4 text-white/60 text-sm truncate">{u.email}</div>
+          <div className="col-span-3 text-white/60 text-sm truncate">{u.email}</div>
           <div className="col-span-2">
             <span className={`inline-block px-2 py-0.5 font-jetbrains text-[10px] uppercase tracking-widest ${u.role === "admin" ? "bg-[#10B981] text-black" : "border border-white/20 text-white/70"}`}>
               {u.role}
             </span>
           </div>
-          <div className="col-span-2 flex md:justify-end gap-2">
+          <div className="col-span-1">
+            {u.education_access ? (
+              <span className="inline-flex items-center gap-1 text-[#F59E0B] font-jetbrains text-[10px] uppercase tracking-widest"><Check size={12} /> Var</span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-white/40 font-jetbrains text-[10px] uppercase tracking-widest"><X size={12} /> Yok</span>
+            )}
+          </div>
+          <div className="col-span-3 flex md:justify-end gap-2 flex-wrap">
+            <button data-testid={`toggle-edu-${u.user_id}`} onClick={() => toggleEdu(u)} className={`px-3 py-1.5 border font-jetbrains text-[10px] uppercase tracking-widest inline-flex items-center gap-1 ${u.education_access ? "border-[#F59E0B] text-[#F59E0B]" : "border-white/10 text-white/70 hover:border-[#F59E0B] hover:text-[#F59E0B]"}`}>
+              <GraduationCap size={12} /> {u.education_access ? "Eğitim kaldır" : "Eğitim ver"}
+            </button>
             {u.role === "writer" ? (
               <button data-testid={`promote-${u.user_id}`} onClick={() => changeRole(u, "admin")} className="px-3 py-1.5 border border-white/10 hover:border-[#10B981] text-white/70 hover:text-[#10B981] font-jetbrains text-[10px] uppercase tracking-widest inline-flex items-center gap-1">
-                <Shield size={12} /> Admin yap
+                <Shield size={12} /> Admin
               </button>
             ) : (
               <button data-testid={`demote-${u.user_id}`} onClick={() => changeRole(u, "writer")} className="px-3 py-1.5 border border-white/10 hover:border-white text-white/70 hover:text-white font-jetbrains text-[10px] uppercase tracking-widest">
-                Writer yap
+                Writer
               </button>
             )}
           </div>
         </div>
       ))}
+    </div>
+  );
+};
+
+const EducationTab = () => {
+  const [members, setMembers] = useState([]);
+  const [email, setEmail] = useState("");
+  const [note, setNote] = useState("");
+  const load = () => api.get("/admin/education-members").then(r => setMembers(r.data || []));
+  useEffect(() => { load(); }, []);
+
+  const add = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    try {
+      await api.post("/admin/education-members", { email: email.trim(), note: note.trim() });
+      toast.success("Üye eklendi");
+      setEmail(""); setNote("");
+      load();
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Eklenemedi");
+    }
+  };
+
+  const remove = async (id) => {
+    if (!window.confirm("Bu üyenin eğitim erişimi kaldırılsın mı?")) return;
+    await api.delete(`/admin/education-members/${id}`);
+    toast.success("Kaldırıldı");
+    load();
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-testid="education-tab">
+      <form onSubmit={add} className="md:col-span-1 border border-white/10 p-5 space-y-3" data-testid="edu-add-form">
+        <div className="flex items-center gap-2">
+          <GraduationCap size={16} className="text-[#F59E0B]" />
+          <h3 className="font-outfit font-bold text-white">Yeni Eğitim Üyesi</h3>
+        </div>
+        <p className="text-white/50 text-xs font-jetbrains uppercase tracking-widest">
+          Bu email ile giriş yapan kullanıcı eğitim içeriklerine erişebilir
+        </p>
+        <input data-testid="edu-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="user@example.com" className="w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white placeholder:text-white/30" />
+        <input data-testid="edu-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Not (opsiyonel) — örn: Ekim 2026 grubu" className="w-full bg-black border border-white/10 px-3 py-2 outline-none focus:border-[#F59E0B] font-jetbrains text-sm text-white placeholder:text-white/30" />
+        <Button type="submit" data-testid="edu-add-submit" className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-black rounded-none font-jetbrains text-[11px] uppercase tracking-widest">
+          <PlusCircle size={14} className="mr-2" /> Ekle
+        </Button>
+        <p className="text-white/40 text-[10px] font-jetbrains uppercase tracking-widest pt-2 border-t border-white/5">
+          {members.length} üye · toplam
+        </p>
+      </form>
+
+      <div className="md:col-span-2 border border-white/10">
+        <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-3 border-b border-white/10 bg-black/60 font-jetbrains text-[10px] uppercase tracking-widest text-white/50">
+          <div className="col-span-5">Email</div>
+          <div className="col-span-4">Not</div>
+          <div className="col-span-2">Eklendi</div>
+          <div className="col-span-1"></div>
+        </div>
+        {members.length === 0 ? (
+          <div className="p-8 text-center text-white/40 font-jetbrains text-xs uppercase tracking-widest">Henüz üye yok. Sol taraftan ekleyin.</div>
+        ) : members.map(m => (
+          <div key={m.id} data-testid={`edu-row-${m.id}`} className="grid grid-cols-1 md:grid-cols-12 gap-3 px-4 py-3 border-b border-white/5 last:border-b-0 items-center">
+            <div className="col-span-5 text-white font-jetbrains text-sm truncate">{m.email}</div>
+            <div className="col-span-4 text-white/60 text-sm truncate">{m.note || "—"}</div>
+            <div className="col-span-2 text-white/40 font-jetbrains text-[10px] uppercase tracking-widest">{new Date(m.added_at).toLocaleDateString("tr-TR")}</div>
+            <div className="col-span-1 flex md:justify-end">
+              <button data-testid={`edu-del-${m.id}`} onClick={() => remove(m.id)} className="p-2 border border-white/10 hover:border-[#EF4444] text-white/70 hover:text-[#EF4444]"><Trash2 size={14} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

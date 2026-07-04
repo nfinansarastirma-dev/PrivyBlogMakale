@@ -643,6 +643,7 @@ async def add_education_member(payload: EducationMemberCreate, session_token: Op
         "added_at": now_iso(),
     }
     await db.education_members.insert_one(doc)
+    doc.pop("_id", None)
     # If user already exists with this email, immediately grant access
     await db.users.update_one({"email": email}, {"$set": {"education_access": True}})
     return doc

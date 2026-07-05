@@ -36,7 +36,8 @@ export const Navbar = () => {
             <img
               src="https://customer-assets.emergentagent.com/job_privyalgo-blog/artifacts/b8het9y5_logo-horizontal.png"
               alt="PrivyAlgo"
-              className="h-28 w-28 md:h-28 md:w-28 object-contain group-hover:scale-105 transition-transform"
+              // YENİ EKLENEN KISIM: Logoyu yatayda büyütecek ve menüye tam oturtacak sınıflar
+              className="w-48 md:w-64 h-auto max-h-28 object-contain group-hover:scale-105 transition-transform"
             />
             <div className="hidden md:flex flex-col leading-none">
               <span className="font-outfit font-bold text-white text-xl tracking-tight">PrivyAlgo Blog</span>

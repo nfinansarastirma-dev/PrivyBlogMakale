@@ -42,7 +42,7 @@ export const Navbar = () => {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8 font-jetbrains text-[11px] uppercase tracking-widest">
-            <Link data-testid="nav-home" to="/" className="text-white/70 hover:text-[#F59E0B] transition-colors">Anasayfa</Link>
+            <Link data-testid="nav-home" to="/" className="text-white/70 hover:text-[#F59E0B] transition-colors">Blog</Link>
             <div className="relative group">
               <button data-testid="nav-categories" className="text-white/70 hover:text-[#F59E0B] transition-colors inline-flex items-center gap-1">
                 Kategoriler
@@ -60,8 +60,8 @@ export const Navbar = () => {
                 ))}
               </div>
             </div>
-            <Link data-testid="nav-education" to="/kategori/egitim" className="text-white/70 hover:text-[#F59E0B] transition-colors">Eğitimler</Link>
-            <a data-testid="nav-external" href="https://privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981] transition-colors">Terminal ↗</a>
+            <Link data-testid="nav-education" to="/kategori/egitim" className="text-white/70 hover:text-[#F59E0B] transition-colors">Opsiyon101</Link>
+            <a data-testid="nav-external" href="https://privyalgo.com" target="_blank" rel="noreferrer" className="text-white/70 hover:text-[#10B981] transition-colors">Terminaller ↗</a>
           </nav>
 
           <div className="flex items-center gap-3">

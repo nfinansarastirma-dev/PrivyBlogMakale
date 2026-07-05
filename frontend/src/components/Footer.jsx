@@ -18,7 +18,7 @@ export const Footer = () => {
             />
             <div>
               <div className="font-outfit font-bold text-2xl text-white">PrivyAlgo Blog</div>
-              <div className="font-jetbrains text-[10px] text-white/40 uppercase tracking-widest mt-1">nFinans · Kantitatif Araştırma</div>
+              <div className="font-jetbrains text-[10px] text-white/40 uppercase tracking-widest mt-1">nFinans · Analitik Terminaller</div>
             </div>
           </div>
           <p className="mt-4 text-sm text-white/60 leading-relaxed max-w-md">

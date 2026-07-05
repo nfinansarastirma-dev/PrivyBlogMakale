@@ -39,10 +39,6 @@ export const Navbar = () => {
               // YENİ EKLENEN KISIM: Logoyu yatayda büyütecek ve menüye tam oturtacak sınıflar
               className="w-48 md:w-64 h-auto max-h-28 object-contain group-hover:scale-105 transition-transform"
             />
-            <div className="hidden md:flex flex-col leading-none">
-              <span className="font-outfit font-bold text-white text-xl tracking-tight">PrivyAlgo Blog</span>
-              <span className="font-jetbrains text-[9px] text-white/40 uppercase tracking-widest mt-1">nFinans · Kantitatif Araştırma</span>
-            </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8 font-jetbrains text-[11px] uppercase tracking-widest">

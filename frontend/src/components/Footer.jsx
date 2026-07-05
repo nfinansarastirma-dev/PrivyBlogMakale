@@ -52,11 +52,11 @@ export const Footer = () => {
 
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="font-mono text-[11px] text-zinc-500">
+            © {new Date().getFullYear()} <span className="text-white">PrivyAlgo</span>. Tüm Hakları Saklıdır.
+          </div>
           <p className="font-jetbrains text-[10px] uppercase tracking-widest text-white/40">
-            © {new Date().getFullYear()} PrivyAlgo Blog · nFinans Araştırma
-          </p>
-          <p className="font-jetbrains text-[10px] uppercase tracking-widest text-white/40">
-            Piyasa · Veri · Algoritma
+            Piyasalar · Analitik Veriler · Algoritmalar
           </p>
         </div>
       </div>

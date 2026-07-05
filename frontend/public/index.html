@@ -3,25 +3,154 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="description" content="A product of emergent.sh" />
+        <meta name="theme-color" content="#0b0e14" />
+        <meta name="color-scheme" content="dark" />
+
+        <!-- ============ PRIMARY SEO ============ -->
+        <title>PrivyAlgo Terminal · BIST + WallStreet Hibrit Kantitatif Analiz Platformu</title>
+        <meta name="description" content="PrivyAlgo · Borsa İstanbul (BIST) ve Wall Street piyasaları için tek terminal. TF AL / TF SAT sinyalleri, Hedge Wall, Net GEX, Vanna, 0DTE, Greeks Heatmap, Buble Map ve algoritmik sentiment skorları. nFinans çatısı altında kantitatif analiz." />
+        <meta name="keywords" content="PrivyAlgo, nFinans, BIST analiz, Borsa İstanbul algoritma, TF AL TF SAT, Hedge Wall, Wall Street terminal, opsiyon analiz, Net GEX, Vanna, 0DTE, Greeks Heatmap, Buble Map, gamma, kantitatif analiz, algoritmik trading, hisse sinyal" />
+        <meta name="author" content="nFinans · PrivyAlgo" />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow" />
+        <link rel="canonical" href="https://privyalgo.com/" />
+
+        <!-- ============ OPEN GRAPH (Facebook, LinkedIn, WhatsApp) ============ -->
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="tr_TR" />
+        <meta property="og:site_name" content="PrivyAlgo · BIST + WallStreet" />
+        <meta property="og:title" content="PrivyAlgo Terminal · BIST + WallStreet Hibrit Kantitatif Analiz" />
+        <meta property="og:description" content="İki piyasa, tek terminal. BIST için TF AL/SAT ve Hedge Wall; Wall Street için Net GEX, Vanna, 0DTE ve Buble Map. Görünmez veriyi görünür kılan algoritma." />
+        <meta property="og:url" content="https://privyalgo.com/" />
+        <meta property="og:image" content="https://privyalgo.com/og-cover.png" />
+        <meta property="og:image:secure_url" content="https://privyalgo.com/og-cover.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="PrivyAlgo Hybrid Terminal — BIST + WallStreet" />
+
+        <!-- Favicons -->
+        <link rel="icon" type="image/png" href="/logo.png" />
+        <link rel="shortcut icon" type="image/png" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+
+        <!-- ============ TWITTER / X ============ -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@nFinans_X" />
+        <meta name="twitter:creator" content="@nFinans_X" />
+        <meta name="twitter:title" content="PrivyAlgo Terminal · BIST + WallStreet Hibrit" />
+        <meta name="twitter:description" content="İki piyasa, tek terminal. BIST + Wall Street algoritmik analiz · Net GEX, Hedge Wall, 0DTE, Buble Map, TF AL/SAT." />
+        <meta name="twitter:image" content="https://privyalgo.com/og-cover.png" />
+
+        <!-- ============ AI SEARCH OPTIMIZATION ============ -->
+        <!-- Hints for Google SGE / Gemini / ChatGPT / Perplexity crawlers -->
+        <meta name="ai-content" content="PrivyAlgo, Türkiye merkezli nFinans tarafından geliştirilen, Borsa İstanbul (BIST) ve Wall Street (NYSE, NASDAQ, SPX) piyasaları için hibrit kantitatif analiz terminalidir. BIST tarafında TF AL/TF SAT sinyalleri, Hedge Wall, MaxBuy/Sell seviyeleri ve sentiment skoru; Wall Street tarafında Net GEX, Vanna (VEX), 0DTE Map, Greeks Heatmap, Buble Map ve Opus Wall cockpit modülleri sunar. Veri sağlayıcıları: Opra Option Chain, Alpaca, Deribit, Yahoo Finance ve MS SQL üzerinde tutulan BIST veri seti." />
+        <meta name="topic" content="Kantitatif Finans, Algoritmik Trading, Opsiyon Analiz, BIST, Wall Street, Borsa İstanbul, Türkiye Finans" />
+        <meta name="audience" content="bireysel yatırımcılar, profesyonel trader'lar, kantitatif analistler" />
+        <meta name="geo.region" content="TR" />
+        <meta name="geo.placename" content="Türkiye" />
+        <meta name="language" content="tr" />
+
+        <!-- ============ FONTS ============ -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
-        <!--
-        manifest.json provides metadata used when your web app is installed on a
-        user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-        -->
-        <!--
-        Notice the use of %PUBLIC_URL% in the tags above.
-        It will be replaced with the URL of the `public` folder during the build.
-        Only files inside the `public` folder can be referenced from the HTML.
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
-        Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-        work correctly both with client-side routing and a non-root public URL.
-        Learn how to configure a non-root public URL by running `npm run build`.
-        -->
-        <title>PrivyAlgo | Blog</title>
+        <!-- ============ STRUCTURED DATA (JSON-LD) ============ -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://privyalgo.com/#organization",
+              "name": "PrivyAlgo",
+              "alternateName": ["nFinans", "Privy Algo", "PrivyAlgo Terminal"],
+              "url": "https://privyalgo.com/",
+              "logo": "https://privyalgo.com/logo.png",
+              "description": "Borsa İstanbul ve Wall Street piyasaları için hibrit kantitatif analiz terminali. nFinans çatısı altında geliştirilir.",
+              "sameAs": [
+                "https://www.youtube.com/@NFinans",
+                "https://x.com/nFinans_X",
+                "https://www.instagram.com/nfinans_arastirma/",
+                "https://www.nfinans.net"
+              ],
+              "founder": { "@type": "Organization", "name": "nFinans Araştırma" },
+              "areaServed": { "@type": "Country", "name": "Türkiye" }
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://privyalgo.com/#website",
+              "url": "https://privyalgo.com/",
+              "name": "PrivyAlgo Terminal · BIST + WallStreet",
+              "inLanguage": "tr-TR",
+              "publisher": { "@id": "https://privyalgo.com/#organization" }
+            },
+            {
+              "@type": "SoftwareApplication",
+              "name": "PrivyAlgo Hybrid Terminal",
+              "applicationCategory": "FinanceApplication",
+              "operatingSystem": "Web",
+              "description": "BIST için TF AL/SAT, Hedge Wall, MaxBuy/Sell, Sentiment skoru. Wall Street için Net GEX, Vanna, 0DTE Map, Greeks Heatmap, Buble Map ve Opus Wall cockpit.",
+              "offers": [
+                { "@type": "Offer", "name": "BIST · 6 Aylık", "price": "5400", "priceCurrency": "TRY", "url": "https://privyalgo.com/#pricing" },
+                { "@type": "Offer", "name": "BIST · Yıllık", "price": "9600", "priceCurrency": "TRY", "url": "https://privyalgo.com/#pricing" },
+                { "@type": "Offer", "name": "WallStreet · 6 Aylık", "price": "12000", "priceCurrency": "TRY", "url": "https://privyalgo.com/#pricing" },
+                { "@type": "Offer", "name": "WallStreet · Yıllık", "price": "16000", "priceCurrency": "TRY", "url": "https://privyalgo.com/#pricing" },
+                { "@type": "Offer", "name": "HYBRID · 6 Aylık", "price": "14500", "priceCurrency": "TRY", "url": "https://privyalgo.com/#pricing" },
+                { "@type": "Offer", "name": "HYBRID · Yıllık", "price": "20500", "priceCurrency": "TRY", "url": "https://privyalgo.com/#pricing" }
+              ],
+              "creator": { "@id": "https://privyalgo.com/#organization" }
+            },
+            {
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "PrivyAlgo Terminal nedir?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "PrivyAlgo, BIST (Borsa İstanbul) ve Wall Street piyasaları için hibrit kantitatif analiz terminalidir. BIST tarafında TF AL / TF SAT sinyalleri, Hedge Wall ve sentiment skoru; Wall Street tarafında Net GEX, Vanna, 0DTE, Greeks Heatmap ve Buble Map modülleri sunar."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "BIST için hangi sinyalleri üretir?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Momentum, Market Score, AOF ve reel fiyat dinamiklerinden türetilen TF AL / TF SAT sinyalleri; ayrıca son 14 günlük likidite kümelerinden Hedge Wall, MaxBuy/Sell seviyeleri ve gerçek zamanlı sentiment skoru (alıcı vs. satıcı gücü)."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Wall Street modülleri nelerdir?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Opus Wall & Cockpit (Net GEX, Vanna, piyasa rejimi), Greeks Heatmap, 0DTE Map (gün içi gamma) ve Buble Map (likidite balonları & akış yoğunluğu)."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "HYBRID paketi nedir?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "HYBRID paketi, BIST Terminal ve WallStreet Terminal'in tek bir abonelikte birleştirildiği avantajlı pakettir. 6 aylık 14.500 TL, yıllık 20.500 TL'dir ve iki piyasayı birden tek ekrandan analiz etmek isteyen yatırımcılara yöneliktir."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Hangi veri sağlayıcılarını kullanır?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Wall Street tarafı için Opra Option Chain, Alpaca, Deribit ve Yahoo Finance; BIST tarafı için MS SQL üzerinde tutulan optimize edilmiş veri seti ve Lightweight Charts (TradingView açık kaynak) görselleştirme."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        </script>
+
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
     </head>

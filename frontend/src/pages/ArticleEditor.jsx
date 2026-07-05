@@ -137,6 +137,11 @@ export const ArticleEditor = () => {
     return <div className="max-w-7xl mx-auto px-4 py-20 text-center font-jetbrains text-white/60">yükleniyor...</div>;
   }
 
+  // YENİ EKLENEN KISIM: Veri veritabanından çekilene kadar editörün boş yüklenmesini engeller.
+  if (isEdit && form.title === "") {
+    return <div className="max-w-7xl mx-auto px-4 py-20 text-center font-jetbrains text-[#F59E0B]">Makale içeriği getiriliyor...</div>;
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="article-editor">
       <button onClick={() => navigate("/dashboard")} className="inline-flex items-center gap-2 font-jetbrains text-[11px] uppercase tracking-widest text-white/60 hover:text-[#F59E0B]">
